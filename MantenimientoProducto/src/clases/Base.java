@@ -13,9 +13,11 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
+import org.apache.log4j.Logger;
 
 public class Base {
 
+    private static Logger log = Logger.getLogger(Base.class);
     /**
      * Formato de n&uacute;mero entero
      */
@@ -31,7 +33,7 @@ public class Base {
             BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
             dato = teclado.readLine();
         } catch (IOException e) {
-            mostrar("Error de Lectura de datos.");
+            log.error("Error de Lectura de datos.", e);
         }
         return dato;
     }
@@ -49,7 +51,7 @@ public class Base {
         try {
             dato = Integer.parseInt(cadena);
         } catch (NumberFormatException nfe) {
-            mostrar("Error al convertir - " + cadena + " - a Entero.");
+            log.error("Error al convertir - " + cadena + " - a Entero.", nfe);
         }
         return dato;
     }
@@ -59,7 +61,7 @@ public class Base {
         try {
             dato = Double.parseDouble(cadena);
         } catch (NumberFormatException nfe) {
-            mostrar("Error al convertir - " + cadena + " - a Real.");
+            log.error("Error al convertir - " + cadena + " - a Real.", nfe);
         }
         return dato;
     }
@@ -69,7 +71,7 @@ public class Base {
         try {
             dato = Long.parseLong(cadena);
         } catch (NumberFormatException nfe) {
-            mostrar("Error al convertir - " + cadena + " - a Entero largo.");
+            log.error("Error al convertir - " + cadena + " - a Entero largo.", nfe);
         }
         return dato;
     }
@@ -254,6 +256,7 @@ public class Base {
                 dato = dato.substring(posicion + 1);
             }
         } catch (UnknownHostException uhe) {
+            log.error(uhe, uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
@@ -269,6 +272,7 @@ public class Base {
                 dato = dato.substring(0, posicion);
             }
         } catch (UnknownHostException uhe) {
+            log.error(uhe, uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
@@ -370,7 +374,7 @@ public class Base {
             y = (y / 2) - (height / 2);
             jfrmVentana.setBounds(x, y, width, height);
         } catch (HeadlessException he) {
-            System.out.println("Error: " + he.toString() + " " + he.getMessage());
+            log.error(he, he);
         }
     }
 
@@ -407,7 +411,7 @@ public class Base {
                     numcase.setValidCharacters("0123456789");
                     factory = new DefaultFormatterFactory(numcase);
                 } catch (ParseException pe) {
-                    Base.mostrar("Error al dar Formato de Numero Entero: " + pe.getMessage());
+                    log.error("Error al dar Formato de Numero Entero", pe);
                 }
                 break;
             case TIPO_NUM_REAL:
@@ -418,7 +422,7 @@ public class Base {
                     numcase.setValidCharacters("0123456789");
                     factory = new DefaultFormatterFactory(numcase);
                 } catch (ParseException pe) {
-                    Base.mostrar("Error al dar Formato de Numero Real" + pe.getMessage());
+                    log.error("Error al dar Formato de Numero Real", pe);
                 }
                 break;
         }
