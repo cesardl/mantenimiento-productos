@@ -8,12 +8,11 @@ import javax.swing.table.DefaultTableModel;
 public final class JFrameRegistro extends javax.swing.JFrame
         implements java.awt.event.ActionListener, java.awt.event.KeyListener {
 
-    private static final int ACTION_NOTHING = 0;
     private static final int ACTION_NEW = 1;
     private static final int ACTION_EDIT = 2;
     protected int iNumFila, iNumColumna, iAccion;
     protected Object objData[][];
-    protected String strRuta = "C:\\MantenimientoProducto\\Producto.dat";
+    protected String strRuta = "/MantenimientoProducto/Producto.dat";
     protected String strTitulo[] = {
         "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"};
     protected ArrayList<Producto> vProductos;
@@ -240,14 +239,18 @@ public final class JFrameRegistro extends javax.swing.JFrame
         if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
             Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
-            String strCod = JOptionPane.showInputDialog(this,
-                    "Ingrese codigo del producto a eliminar:", getTitle(), JOptionPane.PLAIN_MESSAGE);
-            if (strCod != null) {
-                if (ArchivoProducto.anularRegistro(strCod, strRuta)) {
-                    mostrarDatosDeRegistroTabla();
-                    Base.mensaje("Registro eliminado", getTitle(), JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    Base.mensaje("No existe el producto", getTitle(), JOptionPane.ERROR_MESSAGE);
+            int selectedRow = jTableDato.getSelectedRow();
+            if (selectedRow == -1) {
+                Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
+            } else {
+                if (JOptionPane.showConfirmDialog(this, "¿Seguro que desea eliminar este producto?",
+                        getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+                    String strCod = vProductos.get(selectedRow).getCodigo();
+                    if (ArchivoProducto.anularRegistro(strCod, strRuta)) {
+                        mostrarDatosDeRegistroTabla();
+                        Base.mensaje("Producto eliminado", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             }
         }
@@ -437,14 +440,16 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jPanelRegistroLayout.setHorizontalGroup(
             jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabelCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldCodigo)
-                    .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelRegistroLayout.createSequentialGroup()
+                        .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                        .addGap(1, 1, 1)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabelPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -452,13 +457,13 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                        .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
+                        .addGap(125, 125, 125)
                         .addComponent(jCheckBoxExonerado)
                         .addGap(40, 40, 40)
                         .addComponent(jCheckBoxVisible)
                         .addGap(24, 24, 24))
-                    .addComponent(jFormattedTextFieldDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE))
+                    .addComponent(jFormattedTextFieldDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanelRegistroLayout.setVerticalGroup(
