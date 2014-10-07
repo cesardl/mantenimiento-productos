@@ -1,5 +1,6 @@
 package clases;
 
+import clases.etc.NumberType;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.GregorianCalendar;
@@ -15,17 +16,13 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author cesardiaz
+ */
 public class Base {
 
-    private static Logger log = Logger.getLogger(Base.class);
-    /**
-     * Formato de n&uacute;mero entero
-     */
-    public static final int TIPO_NUM_ENTERO = 1;
-    /**
-     * Formato de n&uacute;mero real
-     */
-    public static final int TIPO_NUM_REAL = 2;
+    private static final Logger log = Logger.getLogger(Base.class);
 
     public static String leerDato() {
         String dato = "inicio";
@@ -387,7 +384,7 @@ public class Base {
      * @return
      */
     public static DefaultFormatterFactory creaFormatoControl(
-            int tipo, int cantEnt, int cantFra, char caracter) {
+            NumberType tipo, int cantEnt, int cantFra, char caracter) {
         DefaultFormatterFactory factory = null;
         String cadena = "";
         int i;
@@ -403,7 +400,7 @@ public class Base {
         }
         MaskFormatter numcase;
         switch (tipo) {
-            case TIPO_NUM_ENTERO:
+            case ENTERO:
                 try {
                     numcase = new MaskFormatter(cadena);
                     numcase.setPlaceholderCharacter(caracter);
@@ -414,7 +411,7 @@ public class Base {
                     log.error("Error al dar Formato de Numero Entero", pe);
                 }
                 break;
-            case TIPO_NUM_REAL:
+            case REAL:
                 try {
                     numcase = new MaskFormatter(cadena);
                     numcase.setPlaceholderCharacter(caracter);

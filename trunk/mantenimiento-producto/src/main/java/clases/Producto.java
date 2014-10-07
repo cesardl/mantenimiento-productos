@@ -1,5 +1,9 @@
 package clases;
 
+/**
+ *
+ * @author cesardiaz
+ */
 public class Producto implements java.io.Serializable {
 
     private int id;
@@ -99,11 +103,19 @@ public class Producto implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Codigo: " + codigo
-                + "\nDescripcion: " + descripcion
-                + "\nCantidad: " + total
-                + "\nPrecio: " + precio
-                + "\nExonerado: " + exonerado
-                + "\nVisible: " + visible;
+        StringBuilder builder = new StringBuilder("Codigo: ");
+        builder.append(codigo);
+        builder.append("\nDescripcion: ");
+        builder.append(descripcion);
+        builder.append("\nCantidad: ");
+        builder.append(total);
+        builder.append("\nPrecio: ");
+        builder.append(precio);
+        builder.append("\nExonerado: ");
+        builder.append(exonerado);
+        builder.append("\nVisible: ");
+        builder.append(visible);
+
+        return builder.toString();
     }
 }

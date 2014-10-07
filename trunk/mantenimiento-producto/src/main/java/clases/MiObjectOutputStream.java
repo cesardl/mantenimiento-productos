@@ -1,5 +1,9 @@
 package clases;
 
+/**
+ *
+ * @author cesardiaz
+ */
 public class MiObjectOutputStream extends java.io.ObjectOutputStream {
 
     public MiObjectOutputStream(java.io.OutputStream out) throws java.io.IOException {

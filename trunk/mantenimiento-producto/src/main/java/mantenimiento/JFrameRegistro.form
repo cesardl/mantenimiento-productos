@@ -270,28 +270,27 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jTextFieldCodigo" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jFormattedTextFieldCantidad" pref="51" max="32767" attributes="1"/>
+                              <Component id="jFormattedTextFieldCantidad" pref="48" max="32767" attributes="1"/>
                               <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jLabelPrecio" max="32767" attributes="1"/>
-                          <Component id="jLabelDescripcion" alignment="0" min="-2" pref="82" max="-2" attributes="1"/>
-                      </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jFormattedTextFieldPrecio" pref="71" max="32767" attributes="0"/>
+                          <Component id="jLabelPrecio" min="-2" pref="82" max="-2" attributes="1"/>
+                          <Component id="jLabelDescripcion" min="-2" max="-2" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="jFormattedTextFieldPrecio" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                               <Component id="jCheckBoxExonerado" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                               <Component id="jCheckBoxVisible" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jFormattedTextFieldDescripcion" alignment="0" pref="412" max="32767" attributes="0"/>
+                          <Component id="jFormattedTextFieldDescripcion" min="-2" pref="475" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -359,7 +358,7 @@
                 <Property name="horizontalAlignment" type="int" value="4"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(Base.TIPO_NUM_ENTERO, 5, 0, &apos;0&apos;));"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(NumberType.ENTERO, 5, 0, &apos;0&apos;));"/>
                 <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="jFormattedTextFieldCantidad.addKeyListener(this);"/>
               </AuxValues>
             </Component>
@@ -368,7 +367,7 @@
                 <Property name="horizontalAlignment" type="int" value="4"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(Base.TIPO_NUM_REAL, 2, 2, &apos;0&apos;));"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(NumberType.REAL, 2, 2, &apos;0&apos;));"/>
                 <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="jFormattedTextFieldPrecio.addKeyListener(this);"/>
               </AuxValues>
             </Component>
