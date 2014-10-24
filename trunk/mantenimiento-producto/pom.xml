@@ -28,7 +28,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.scytl.utils.transformer.App</mainClass>
+                            <mainClass>mantenimiento.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
