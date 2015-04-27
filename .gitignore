@@ -8,3 +8,7 @@ target/
 # NetBeans
 nb-configuration.xml
 nbactions.xml
+
+# IntelliJ IDEA
+.idea/
+*.iml
