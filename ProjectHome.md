@@ -1,1 +1,0 @@
-Aplicación desktop que maneja persistencia de datos escribiendo los objetos en un archivo plano, aplicación sencilla para aprender a manejar estas clases.
