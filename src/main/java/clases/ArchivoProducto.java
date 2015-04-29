@@ -1,6 +1,15 @@
 package clases;
 
-import org.apache.log4j.Logger;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -8,101 +17,106 @@ import org.apache.log4j.Logger;
  */
 public class ArchivoProducto {
 
-    private static final Logger log = Logger.getLogger(ArchivoProducto.class);
+    private static final Logger log = LoggerFactory.getLogger(ArchivoProducto.class);
 
+    /**
+     *
+     * @return
+     */
     public static String obtenerNumeroSecuencia() {
         return Base.completarIzquierda(String.valueOf((int) Math.round(Math.random() * 10000)), 5, "0");
     }
 
+    /**
+     *
+     * @param producto
+     * @param ruta
+     */
     public static void crearArchivo(Producto producto, String ruta) {
-        try {
-            java.io.ObjectOutputStream salida = new java.io.ObjectOutputStream(
-                    new java.io.FileOutputStream(ruta));
+        try (ObjectOutputStream salida = new ObjectOutputStream(
+                new FileOutputStream(ruta))) {
             salida.writeObject(producto);
-            salida.close();
-        } catch (java.io.IOException e) {
-            log.error("Error de E/S de Archivo: " + ruta, e);
+        } catch (IOException e) {
+            log.error("Error de E/S de Archivo: {}", ruta, e);
         }
     }
 
-    public static java.util.ArrayList<Producto> cargarRegistrosArray(
-            java.util.ArrayList<Producto> productos, String ruta) {
-        java.io.ObjectInputStream entrada = null;
-
+    /**
+     *
+     * @param productos
+     * @param ruta
+     * @return
+     */
+    public static ArrayList<Producto> cargarRegistrosArray(ArrayList<Producto> productos, String ruta) {
         try {
-            java.io.File archivo = new java.io.File(ruta);
+            File archivo = new File(ruta);
             if (archivo.exists()) {
-                entrada = new java.io.ObjectInputStream(new java.io.FileInputStream(archivo));
-                Producto auxProducto;
-                while ((auxProducto = (Producto) entrada.readObject()) != null) {
-                    productos.add(auxProducto);
+                try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(archivo))) {
+                    Producto auxProducto;
+                    while ((auxProducto = (Producto) entrada.readObject()) != null) {
+                        productos.add(auxProducto);
+                    }
                 }
-                entrada.close();
             } else {
                 archivo.createNewFile();
-                log.info("Archivo creado en " + archivo.getAbsolutePath());
+                log.info("Archivo creado en {}", archivo.getAbsolutePath());
             }
-        } catch (java.io.EOFException e) {
-            try {
-                if (entrada != null) {
-                    entrada.close();
-                }
-                log.info("Fin de Archivo: " + ruta);
-            } catch (java.io.IOException ioe) {
-                log.error("Error de E/S de Archivo: " + ruta, ioe);
-            }
+        } catch (EOFException e) {
+            log.error("Error de fin de Archivo: {}", ruta, e);
         } catch (ClassNotFoundException e) {
             log.error("Clase no encontrada", e);
-        } catch (java.io.IOException e) {
-            log.error("Error de E/S de Archivo: " + ruta, e);
+        } catch (IOException e) {
+            log.error("Error de E/S de Archivo: {}", ruta, e);
         }
 
         return productos;
     }
 
+    /**
+     *
+     * @param ruta
+     * @return
+     */
     public static int cantidadRegistros(String ruta) {
         int cantidad = 0;
-        java.io.ObjectInputStream entrada = null;
-        try {
-            entrada = new java.io.ObjectInputStream(new java.io.FileInputStream(ruta));
+
+        try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(ruta))) {
             while (((Producto) entrada.readObject()) != null) {
                 cantidad++;
             }
-            entrada.close();
-        } catch (java.io.EOFException e) {
-            try {
-                if (entrada != null) {
-                    entrada.close();
-                }
-                log.info("Fin de Archivo: " + ruta);
-            } catch (java.io.IOException ioe) {
-                log.error("Error de E/S de Archivo: " + ruta, ioe);
-            }
+        } catch (EOFException e) {
+            log.error("Error de fin de Archivo: {}", ruta, e);
         } catch (ClassNotFoundException e) {
             log.error("Clase no encontrada", e);
-        } catch (java.io.IOException e) {
-            log.error("Error de E/S de Archivo: " + ruta, e);
+        } catch (IOException e) {
+            log.error("Error de E/S de Archivo: {}", ruta, e);
         }
 
         return cantidad;
     }
 
+    /**
+     *
+     * @param producto
+     * @param ruta
+     */
     public static void adicionarRegistro(Producto producto, String ruta) {
-        try {
-            MiObjectOutputStream salida = new MiObjectOutputStream(
-                    new java.io.FileOutputStream(ruta, true));
+        try (MiObjectOutputStream salida = new MiObjectOutputStream(new FileOutputStream(ruta, true))) {
             salida.writeUnshared(producto);
-            salida.close();
-
-            log.info("Producto agregado: " + producto);
-        } catch (java.io.IOException e) {
-            log.error("Error de E/S de Archivo: " + ruta, e);
+            log.info("Producto agregado: {}", producto);
+        } catch (IOException e) {
+            log.error("Error de E/S de Archivo: {}", ruta, e);
         }
     }
 
+    /**
+     *
+     * @param producto
+     * @param ruta
+     */
     public static void modificarRegistro(Producto producto, String ruta) {
         boolean band = false;
-        java.util.ArrayList<Producto> v = new java.util.ArrayList<Producto>();
+        ArrayList<Producto> v = new ArrayList<>();
         cargarRegistrosArray(v, ruta);
         for (int i = 0; i < v.size(); i++) {
             Producto p = v.get(i);
@@ -113,25 +127,27 @@ public class ArchivoProducto {
             }
         }
         if (band) {
-            try {
-                java.io.ObjectOutputStream salida = new java.io.ObjectOutputStream(
-                        new java.io.FileOutputStream(ruta));
+            try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
                 salida.reset();
                 for (Producto p : v) {
                     salida.writeObject(p);
                 }
-                salida.close();
-
-                log.info("Producto modificado: " + producto);
-            } catch (java.io.IOException ioe) {
-                log.error(ioe, ioe);
+                log.info("Producto modificado: {}", producto);
+            } catch (IOException ioe) {
+                log.error("Error de E/S de Archivo: {}", ruta, ioe);
             }
         }
     }
 
+    /**
+     *
+     * @param codigo
+     * @param ruta
+     * @return
+     */
     public static boolean anularRegistro(String codigo, String ruta) {
         boolean band = false;
-        java.util.ArrayList<Producto> v = new java.util.ArrayList<Producto>();
+        ArrayList<Producto> v = new ArrayList<>();
         cargarRegistrosArray(v, ruta);
         for (int i = 0; i < v.size(); i++) {
             Producto p = v.get(i);
@@ -143,25 +159,28 @@ public class ArchivoProducto {
         }
 
         if (band) {
-            try {
-                java.io.ObjectOutputStream salida = new java.io.ObjectOutputStream(
-                        new java.io.FileOutputStream(ruta));
+            try (ObjectOutputStream salida = new ObjectOutputStream(
+                    new FileOutputStream(ruta))) {
                 salida.reset();
                 for (Producto p : v) {
                     salida.writeObject(p);
                 }
-                salida.close();
-                
-                log.info("Producto anulado: " + codigo);
-            } catch (java.io.IOException ioe) {
-                log.error(ioe, ioe);
+                log.info("Producto anulado: {}", codigo);
+            } catch (IOException ioe) {
+                log.error("Error de E/S de Archivo: {}", ruta, ioe);
             }
         }
         return band;
     }
 
+    /**
+     *
+     * @param codigo
+     * @param ruta
+     * @return
+     */
     public static String consultarRegistro(String codigo, String ruta) {
-        java.util.ArrayList<Producto> v = new java.util.ArrayList<Producto>();
+        ArrayList<Producto> v = new ArrayList<>();
 
         cargarRegistrosArray(v, ruta);
 

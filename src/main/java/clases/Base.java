@@ -14,7 +14,8 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,12 +23,15 @@ import org.apache.log4j.Logger;
  */
 public class Base {
 
-    private static final Logger log = Logger.getLogger(Base.class);
+    private static final Logger log = LoggerFactory.getLogger(Base.class);
 
+    /**
+     *
+     * @return
+     */
     public static String leerDato() {
         String dato = "inicio";
-        try {
-            BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+        try (BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in))) {
             dato = teclado.readLine();
         } catch (IOException e) {
             log.error("Error de Lectura de datos.", e);
@@ -35,14 +39,27 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @param cadena 
+     */
     public static void mostrar(String cadena) {
         System.out.println(cadena);
     }
 
+    /**
+     * 
+     * @param cadena 
+     */
     public static void mostrarSeguido(String cadena) {
         System.out.print(cadena);
     }
 
+    /**
+     * 
+     * @param cadena
+     * @return 
+     */
     public static int convertirCadenaEntero(String cadena) {
         int dato = -99999;
         try {
@@ -53,6 +70,11 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @param cadena
+     * @return 
+     */
     public static double convertirCadenaReal(String cadena) {
         double dato = -99999;
         try {
@@ -63,6 +85,11 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @param cadena
+     * @return 
+     */
     public static long convertirCadenaEnteroLargo(String cadena) {
         long dato = -99999;
         try {
@@ -73,6 +100,13 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @param cadena
+     * @param cantidad
+     * @param simbolo
+     * @return 
+     */
     public static String completarIzquierda(String cadena, int cantidad, String simbolo) {
         String aux = "";
         double veces = cantidad;
@@ -94,6 +128,13 @@ public class Base {
         return aux;
     }
 
+    /**
+     * 
+     * @param cadena
+     * @param cantidad
+     * @param simbolo
+     * @return 
+     */
     public static String completarDerecha(String cadena, int cantidad, String simbolo) {
         String aux = "";
         double veces = cantidad;
@@ -115,6 +156,13 @@ public class Base {
         return aux;
     }
 
+    /**
+     * 
+     * @param cadena
+     * @param cantidad
+     * @param simbolo
+     * @return 
+     */
     public static String centrarCadena(String cadena, int cantidad, String simbolo) {
         String aux = "";
         String cadenaD, cadenaI;
@@ -134,6 +182,10 @@ public class Base {
         return aux;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getFecha() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
@@ -142,24 +194,40 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getDia() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getMes() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getAnio() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHoraMinSeg() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -168,6 +236,10 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHoraMin() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -175,6 +247,10 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHoraMinSegAmPm() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -188,6 +264,10 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHoraMinAmPm() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -200,6 +280,10 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHoraMinSegAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -213,6 +297,10 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHoraMinAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -225,24 +313,40 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getHora() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getMinuto() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getSegundo() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getDireccionIp() {
         String dato;
         int posicion;
@@ -253,12 +357,16 @@ public class Base {
                 dato = dato.substring(posicion + 1);
             }
         } catch (UnknownHostException uhe) {
-            log.error(uhe, uhe);
+            log.error(uhe.getMessage(), uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getNombreMaquina() {
         String dato;
         int posicion;
@@ -269,12 +377,17 @@ public class Base {
                 dato = dato.substring(0, posicion);
             }
         } catch (UnknownHostException uhe) {
-            log.error(uhe, uhe);
+            log.error(uhe.getMessage(), uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
     }
 
+    /**
+     * 
+     * @param mes
+     * @return 
+     */
     public static String getMesEnLetra(int mes) {
         String dato = "";
         switch (mes) {
@@ -318,6 +431,10 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getDiaEnLetra() {
         GregorianCalendar calendario = new GregorianCalendar();
         int dia = calendario.get(GregorianCalendar.DAY_OF_WEEK);
@@ -349,16 +466,30 @@ public class Base {
         return dato;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public static String getFechaEnLetra() {
         String dato;
         dato = getDia() + " de " + getMesEnLetra(convertirCadenaEntero(getMes())) + " del " + getAnio();
         return dato;
     }
 
+    /**
+     * 
+     * @param strMensaje
+     * @param strTitulo
+     * @param iTipoIcono 
+     */
     public static void mensaje(String strMensaje, String strTitulo, int iTipoIcono) {
         JOptionPane.showMessageDialog(null, strMensaje, strTitulo, iTipoIcono);
     }
 
+    /**
+     * 
+     * @param jfrmVentana 
+     */
     public static void centrarVentana(JFrame jfrmVentana) {
         try {
             Dimension tamPantalla = Toolkit.getDefaultToolkit().getScreenSize();
@@ -371,7 +502,7 @@ public class Base {
             y = (y / 2) - (height / 2);
             jfrmVentana.setBounds(x, y, width, height);
         } catch (HeadlessException he) {
-            log.error(he, he);
+            log.error(he.getMessage(), he);
         }
     }
 

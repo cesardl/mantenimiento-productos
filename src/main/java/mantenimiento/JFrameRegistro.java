@@ -69,7 +69,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     public void mostrarDatosDeRegistroTabla() {
         iNumColumna = 6;
-        vProductos = new ArrayList<Producto>();
+        vProductos = new ArrayList<>();
 
         ArchivoProducto.cargarRegistrosArray(vProductos, strRuta);
         iNumFila = vProductos.size();
