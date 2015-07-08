@@ -81,7 +81,7 @@ public class ArchivoProducto {
         int cantidad = 0;
 
         try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(ruta))) {
-            while (((Producto) entrada.readObject()) != null) {
+            while ((entrada.readObject()) != null) {
                 cantidad++;
             }
         } catch (EOFException e) {
@@ -101,7 +101,7 @@ public class ArchivoProducto {
      * @param ruta
      */
     public static void adicionarRegistro(Producto producto, String ruta) {
-        try (MiObjectOutputStream salida = new MiObjectOutputStream(new FileOutputStream(ruta, true))) {
+        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta, true))) {
             salida.writeUnshared(producto);
             log.info("Producto agregado: {}", producto);
         } catch (IOException e) {

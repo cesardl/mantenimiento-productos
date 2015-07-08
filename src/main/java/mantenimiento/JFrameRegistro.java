@@ -8,7 +8,6 @@ import clases.etc.NumberType;
 import java.awt.Component;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -17,12 +16,14 @@ import javax.swing.table.DefaultTableModel;
 public final class JFrameRegistro extends javax.swing.JFrame
         implements java.awt.event.ActionListener, java.awt.event.KeyListener {
 
-    private final String strTitulo[] = {
-        "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"};
+    private static final int iNumColumna = 6;
+
+    private static final String strTitulo[] = {
+        "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
+    };
 
     private final String strRuta;
 
-    private int iNumFila, iNumColumna;
     private ActionType iAccion;
     private Object objData[][];
     private ArrayList<Producto> vProductos;
@@ -37,7 +38,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         controlarEstadoPanelIngresoDeDatos(false);
     }
 
-    public void limpiarRegistro() {
+    private void limpiarRegistro() {
         jTextFieldCodigo.setText("");
         jFormattedTextFieldDescripcion.setText("");
         jFormattedTextFieldCantidad.setText("0");
@@ -57,7 +58,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
     }
 
-    public void controlarEstadoPanelIngresoDeDatos(boolean b) {
+    private void controlarEstadoPanelIngresoDeDatos(boolean b) {
         Component components[] = jPanelRegistro.getComponents();
         for (Component c : components) {
             if (c instanceof javax.swing.JFormattedTextField
@@ -67,15 +68,14 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
     }
 
-    public void mostrarDatosDeRegistroTabla() {
-        iNumColumna = 6;
+    private void mostrarDatosDeRegistroTabla() {
         vProductos = new ArrayList<>();
 
         ArchivoProducto.cargarRegistrosArray(vProductos, strRuta);
-        iNumFila = vProductos.size();
-        objData = new Object[iNumFila][iNumColumna];
+        int size = vProductos.size();
+        objData = new Object[size][iNumColumna];
 
-        for (int i = 0; i < iNumFila; i++) {
+        for (int i = 0; i < size; i++) {
             Producto p = vProductos.get(i);
             objData[i][0] = p.getCodigo();
             objData[i][1] = p.getDescripcion();
@@ -85,12 +85,12 @@ public final class JFrameRegistro extends javax.swing.JFrame
             objData[i][5] = p.isVisible();
         }
         //Rediseniando la Tabla
-        DefaultTableModel dtm = (DefaultTableModel) jTableDato.getModel();
+        javax.swing.table.DefaultTableModel dtm = (javax.swing.table.DefaultTableModel) jTableDato.getModel();
         dtm.setDataVector(objData, strTitulo);
         jTableDato.setModel(dtm);
     }
 
-    public void nuevoRegistro() {
+    private void nuevoRegistro() {
         iAccion = ActionType.NEW;
 
         controlarEstadoBotonesBarraHerramienta(2);
@@ -193,7 +193,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         return bValor;
     }
 
-    public void postEditarRegistro() {
+    private void postEditarRegistro() {
         mostrarDatosDeRegistroTabla();
         controlarEstadoBotonesBarraHerramienta(1);
         controlarEstadoPanelIngresoDeDatos(false);
@@ -201,7 +201,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void grabarRegistro() {
+    private void grabarRegistro() {
         if (preGrabarRegistro()) {
             switch (iAccion) {
                 case NEW:
@@ -219,7 +219,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
     }
 
-    public void editarRegistro() {
+    private void editarRegistro() {
         iAccion = ActionType.EDIT;
 
         int selectedRow = jTableDato.getSelectedRow();
@@ -267,7 +267,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
     }
 
-    public void salirRegistro() {
+    private void salirRegistro() {
         if (JOptionPane.showConfirmDialog(this, "Seguro que desea salir?",
                 getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             System.exit(0);
@@ -277,36 +277,36 @@ public final class JFrameRegistro extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jToolBarRegistro = new javax.swing.JToolBar();
+        javax.swing.JToolBar jToolBarRegistro = new javax.swing.JToolBar();
         jButtonNuevo = new javax.swing.JButton();
         jButtonConsultar = new javax.swing.JButton();
         jButtonGrabar = new javax.swing.JButton();
         jButtonEdit = new javax.swing.JButton();
         jButtonAnular = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
-        jPanelCabecera = new javax.swing.JPanel();
+        javax.swing.JPanel jPanelCabecera = new javax.swing.JPanel();
         jPanelRegistro = new javax.swing.JPanel();
-        jLabelCodigo = new javax.swing.JLabel();
-        jLabelDescripcion = new javax.swing.JLabel();
-        jLabelCantidad = new javax.swing.JLabel();
-        jLabelPrecio = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelCodigo = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelDescripcion = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelCantidad = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelPrecio = new javax.swing.JLabel();
         jTextFieldCodigo = new javax.swing.JTextField();
         jFormattedTextFieldDescripcion = new javax.swing.JFormattedTextField();
         jFormattedTextFieldCantidad = new javax.swing.JFormattedTextField();
         jFormattedTextFieldPrecio = new javax.swing.JFormattedTextField();
         jCheckBoxExonerado = new javax.swing.JCheckBox();
         jCheckBoxVisible = new javax.swing.JCheckBox();
-        jPanelDetalle = new javax.swing.JPanel();
-        jScrollPaneDato = new javax.swing.JScrollPane();
+        javax.swing.JPanel jPanelDetalle = new javax.swing.JPanel();
+        javax.swing.JScrollPane jScrollPaneDato = new javax.swing.JScrollPane();
         jTableDato = new javax.swing.JTable();
-        defaultTableModel = new javax.swing.table.DefaultTableModel(
+        javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             strTitulo
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -623,17 +623,8 @@ public final class JFrameRegistro extends javax.swing.JFrame
     private javax.swing.JFormattedTextField jFormattedTextFieldCantidad;
     private javax.swing.JFormattedTextField jFormattedTextFieldDescripcion;
     private javax.swing.JFormattedTextField jFormattedTextFieldPrecio;
-    private javax.swing.JLabel jLabelCantidad;
-    private javax.swing.JLabel jLabelCodigo;
-    private javax.swing.JLabel jLabelDescripcion;
-    private javax.swing.JLabel jLabelPrecio;
-    private javax.swing.JPanel jPanelCabecera;
-    private javax.swing.JPanel jPanelDetalle;
     private javax.swing.JPanel jPanelRegistro;
-    private javax.swing.JScrollPane jScrollPaneDato;
     private javax.swing.JTable jTableDato;
-    private javax.swing.table.DefaultTableModel defaultTableModel;
     private javax.swing.JTextField jTextFieldCodigo;
-    private javax.swing.JToolBar jToolBarRegistro;
     // End of variables declaration//GEN-END:variables
 }
