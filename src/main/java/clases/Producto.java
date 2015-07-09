@@ -6,6 +6,11 @@ package clases;
  */
 public class Producto implements java.io.Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3762613621712220046L;
+
     private int id;
     private String codigo;
     private String descripcion;
