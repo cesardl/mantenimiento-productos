@@ -24,8 +24,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private final String strRuta;
 
-    private ActionType iAccion;
-    private Object objData[][];
+    private ActionType currentAction;
     private ArrayList<Producto> vProductos;
 
     public JFrameRegistro(String strRuta) {
@@ -33,8 +32,6 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         initComponents();
 
-        mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(1);
         controlarEstadoPanelIngresoDeDatos(false);
     }
 
@@ -47,13 +44,23 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jCheckBoxVisible.setSelected(true);
     }
 
-    public void controlarEstadoBotonesBarraHerramienta(int opcion) {
+    private void controlarEstadoBotonesBarraHerramienta(int opcion) {
         switch (opcion) {
             case 1:
                 jButtonGrabar.setEnabled(false);
+
+                jButtonConsultar.setEnabled(true);
+                jButtonEdit.setEnabled(true);
+                jButtonAnular.setEnabled(true);
+                jButtonSalir.setEnabled(true);
                 break;
-            case 2:
+            case 2:// Nuevo
                 jButtonGrabar.setEnabled(true);
+
+                jButtonConsultar.setEnabled(false);
+                jButtonEdit.setEnabled(false);
+                jButtonAnular.setEnabled(false);
+                jButtonSalir.setEnabled(false);
                 break;
         }
     }
@@ -69,11 +76,18 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private void mostrarDatosDeRegistroTabla() {
+        //Rediseniando la Tabla
+        javax.swing.table.DefaultTableModel dtm = (javax.swing.table.DefaultTableModel) jTableDato.getModel();
+        dtm.setDataVector(getTableData(), strTitulo);
+        jTableDato.setModel(dtm);
+    }
+
+    private Object[][] getTableData() {
         vProductos = new ArrayList<>();
 
         ArchivoProducto.cargarRegistrosArray(vProductos, strRuta);
         int size = vProductos.size();
-        objData = new Object[size][iNumColumna];
+        Object[][] objData = new Object[size][iNumColumna];
 
         for (int i = 0; i < size; i++) {
             Producto p = vProductos.get(i);
@@ -84,21 +98,19 @@ public final class JFrameRegistro extends javax.swing.JFrame
             objData[i][4] = p.isExonerado();
             objData[i][5] = p.isVisible();
         }
-        //Rediseniando la Tabla
-        javax.swing.table.DefaultTableModel dtm = (javax.swing.table.DefaultTableModel) jTableDato.getModel();
-        dtm.setDataVector(objData, strTitulo);
-        jTableDato.setModel(dtm);
+        return objData;
     }
 
     private void nuevoRegistro() {
-        iAccion = ActionType.NEW;
+        currentAction = ActionType.NEW;
 
+        limpiarRegistro();
         controlarEstadoBotonesBarraHerramienta(2);
         controlarEstadoPanelIngresoDeDatos(true);
         jFormattedTextFieldDescripcion.requestFocus();
     }
 
-    public void consultarRegistro() {
+    private void consultarRegistro() {
         if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
             Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
@@ -116,8 +128,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
     }
 
-    private boolean preGrabarRegistro() {
-        boolean bValor = false;
+    private boolean validarFormulario() {
         int iValor = 0;
 
         if (jFormattedTextFieldDescripcion.getText().trim().length() == 0) {
@@ -129,10 +140,6 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
 
         switch (iValor) {
-            case 1:
-                Base.mensaje("Ingrese correctamente el Codigo.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jTextFieldCodigo.requestFocus();
-                break;
             case 2:
                 Base.mensaje("Ingrese correctamente la Descripcion.", getTitle(), JOptionPane.ERROR_MESSAGE);
                 jFormattedTextFieldDescripcion.requestFocus();
@@ -145,10 +152,8 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 Base.mensaje("Ingrese correctamente el Precio.", getTitle(), JOptionPane.ERROR_MESSAGE);
                 jFormattedTextFieldPrecio.requestFocus();
                 break;
-            default:
-                bValor = true;
         }
-        return bValor;
+        return iValor == 0;
     }
 
     private boolean grabarRegistroArchivo() {
@@ -170,7 +175,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         return bValor;
     }
 
-    private void postgrabarRegistro() {
+    private void postGrabarRegistro() {
         mostrarDatosDeRegistroTabla();
         controlarEstadoBotonesBarraHerramienta(1);
         controlarEstadoPanelIngresoDeDatos(false);
@@ -197,22 +202,23 @@ public final class JFrameRegistro extends javax.swing.JFrame
         mostrarDatosDeRegistroTabla();
         controlarEstadoBotonesBarraHerramienta(1);
         controlarEstadoPanelIngresoDeDatos(false);
+        limpiarRegistro();
         Base.mensaje("Se actualizo el registro satisfactoriamente.",
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void grabarRegistro() {
-        if (preGrabarRegistro()) {
-            switch (iAccion) {
+        if (validarFormulario()) {
+            switch (currentAction) {
                 case NEW:
                     if (grabarRegistroArchivo()) {
-                        postgrabarRegistro();
+                        postGrabarRegistro();
                     }
                     break;
 
                 case EDIT:
                     if (editarRegistroArchivo()) {
-                        postgrabarRegistro();
+                        postEditarRegistro();
                     }
                     break;
             }
@@ -220,33 +226,37 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private void editarRegistro() {
-        iAccion = ActionType.EDIT;
-
-        int selectedRow = jTableDato.getSelectedRow();
-        if (selectedRow == -1) {
-            Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
+        if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
+            Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
-            Producto prod = vProductos.get(selectedRow);
+            currentAction = ActionType.EDIT;
 
-            controlarEstadoBotonesBarraHerramienta(2);
-            controlarEstadoPanelIngresoDeDatos(true);
+            int selectedRow = jTableDato.getSelectedRow();
+            if (selectedRow == -1) {
+                Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
+            } else {
+                Producto prod = vProductos.get(selectedRow);
 
-            String[] price = String.valueOf(prod.getPrecio()).split("\\.");
-            String real = Base.completarIzquierda(price[0], 2, "0");
-            String decimal = Base.completarDerecha(price[1], 2, "0");
+                controlarEstadoBotonesBarraHerramienta(2);
+                controlarEstadoPanelIngresoDeDatos(true);
 
-            jTextFieldCodigo.setText(prod.getCodigo());
-            jFormattedTextFieldDescripcion.setText(prod.getDescripcion());
-            jFormattedTextFieldCantidad.setText(Base.completarIzquierda(String.valueOf(prod.getTotal()), 5, "0"));
-            jFormattedTextFieldPrecio.setText(real.concat(".").concat(decimal));
-            jCheckBoxExonerado.setSelected(prod.isExonerado());
-            jCheckBoxVisible.setSelected(prod.isVisible());
+                String[] price = String.valueOf(prod.getPrecio()).split("\\.");
+                String real = Base.completarIzquierda(price[0], 2, "0");
+                String decimal = Base.completarDerecha(price[1], 2, "0");
 
-            jFormattedTextFieldDescripcion.requestFocus();
+                jTextFieldCodigo.setText(prod.getCodigo());
+                jFormattedTextFieldDescripcion.setText(prod.getDescripcion());
+                jFormattedTextFieldCantidad.setText(Base.completarIzquierda(String.valueOf(prod.getTotal()), 5, "0"));
+                jFormattedTextFieldPrecio.setText(real.concat(".").concat(decimal));
+                jCheckBoxExonerado.setSelected(prod.isExonerado());
+                jCheckBoxVisible.setSelected(prod.isVisible());
+
+                jFormattedTextFieldDescripcion.requestFocus();
+            }
         }
     }
 
-    public void anularRegistro() {
+    private void anularRegistro() {
         if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
             Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
@@ -300,9 +310,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         javax.swing.JScrollPane jScrollPaneDato = new javax.swing.JScrollPane();
         jTableDato = new javax.swing.JTable();
         javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
+            getTableData(),
             strTitulo
         ) {
             Class[] types = new Class [] {
@@ -323,6 +331,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mantenimiento de Productos");
+        setMinimumSize(new java.awt.Dimension(850, 320));
 
         jButtonNuevo.setBackground(new java.awt.Color(255, 255, 255));
         jButtonNuevo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -356,6 +365,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonGrabar.setMnemonic('G');
         jButtonGrabar.setToolTipText("Grabar Registro");
         jButtonGrabar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonGrabar.setEnabled(false);
         jButtonGrabar.setHideActionText(true);
         jButtonGrabar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonGrabar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
@@ -419,16 +429,16 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         jTextFieldCodigo.setEditable(false);
         jTextFieldCodigo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jTextFieldCodigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldCodigo.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
         jFormattedTextFieldDescripcion.requestFocus();
         jFormattedTextFieldDescripcion.addKeyListener(this);
 
-        jFormattedTextFieldCantidad.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jFormattedTextFieldCantidad.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(NumberType.ENTERO, 5, 0, '0'));
         jFormattedTextFieldCantidad.addKeyListener(this);
 
-        jFormattedTextFieldPrecio.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jFormattedTextFieldPrecio.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(NumberType.REAL, 2, 2, '0'));
         jFormattedTextFieldPrecio.addKeyListener(this);
 
@@ -453,28 +463,28 @@ public final class JFrameRegistro extends javax.swing.JFrame
             .addGroup(jPanelRegistroLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabelCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
+                    .addComponent(jLabelCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                    .addComponent(jLabelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldCodigo)
                     .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
+                        .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
                         .addGap(1, 1, 1)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDescripcion))
+                    .addComponent(jLabelPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldPrecio)
-                        .addGap(125, 125, 125)
+                        .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                        .addGap(53, 53, 53)
                         .addComponent(jCheckBoxExonerado)
-                        .addGap(40, 40, 40)
-                        .addComponent(jCheckBoxVisible)
-                        .addGap(36, 36, 36))
-                    .addComponent(jFormattedTextFieldDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jFormattedTextFieldDescripcion))
+                .addContainerGap())
         );
         jPanelRegistroLayout.setVerticalGroup(
             jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -492,7 +502,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
                     .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelPrecio)
                     .addComponent(jCheckBoxExonerado))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanelCabeceraLayout = new javax.swing.GroupLayout(jPanelCabecera);
@@ -527,14 +537,14 @@ public final class JFrameRegistro extends javax.swing.JFrame
             jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelDetalleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
+                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanelDetalleLayout.setVerticalGroup(
             jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelDetalleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -542,7 +552,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
+            .addComponent(jToolBarRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
             .addComponent(jPanelCabecera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -563,7 +573,6 @@ public final class JFrameRegistro extends javax.swing.JFrame
     @Override
     public void actionPerformed(java.awt.event.ActionEvent ae) {
         if (ae.getSource().equals(jButtonNuevo)) {
-            limpiarRegistro();
             nuevoRegistro();
         }
         if (ae.getSource().equals(jButtonConsultar)) {

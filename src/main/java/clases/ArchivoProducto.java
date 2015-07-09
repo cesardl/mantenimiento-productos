@@ -62,7 +62,7 @@ public class ArchivoProducto {
                 log.info("Archivo creado en {}", archivo.getAbsolutePath());
             }
         } catch (EOFException e) {
-            log.error("Error de fin de Archivo: {}", ruta, e);
+            log.error("Error de fin de Archivo: {}", ruta);
         } catch (ClassNotFoundException e) {
             log.error("Clase no encontrada", e);
         } catch (IOException e) {
@@ -81,11 +81,11 @@ public class ArchivoProducto {
         int cantidad = 0;
 
         try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(ruta))) {
-            while ((entrada.readObject()) != null) {
+            while (entrada.readObject() != null) {
                 cantidad++;
             }
         } catch (EOFException e) {
-            log.error("Error de fin de Archivo: {}", ruta, e);
+            log.error("Error de fin de Archivo: {}", ruta);
         } catch (ClassNotFoundException e) {
             log.error("Clase no encontrada", e);
         } catch (IOException e) {
@@ -101,8 +101,9 @@ public class ArchivoProducto {
      * @param ruta
      */
     public static void adicionarRegistro(Producto producto, String ruta) {
-        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta, true))) {
+        try (AppendingObjectOutputStream salida = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
             salida.writeUnshared(producto);
+            salida.flush();
             log.info("Producto agregado: {}", producto);
         } catch (IOException e) {
             log.error("Error de E/S de Archivo: {}", ruta, e);
@@ -159,8 +160,7 @@ public class ArchivoProducto {
         }
 
         if (band) {
-            try (ObjectOutputStream salida = new ObjectOutputStream(
-                    new FileOutputStream(ruta))) {
+            try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
                 salida.reset();
                 for (Producto p : v) {
                     salida.writeObject(p);
