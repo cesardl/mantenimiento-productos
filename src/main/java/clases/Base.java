@@ -11,6 +11,7 @@ import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
@@ -40,25 +41,20 @@ public class Base {
     }
 
     /**
-     * 
-     * @param cadena 
+     *
+     * @param numero
+     * @return
      */
-    public static void mostrar(String cadena) {
-        System.out.println(cadena);
+    public static String formatearNumeroYDigitos(double numero) {
+        String pattern = "#0.00";
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+        return decimalFormat.format(numero);
     }
 
     /**
-     * 
-     * @param cadena 
-     */
-    public static void mostrarSeguido(String cadena) {
-        System.out.print(cadena);
-    }
-
-    /**
-     * 
+     *
      * @param cadena
-     * @return 
+     * @return
      */
     public static int convertirCadenaEntero(String cadena) {
         int dato = -99999;
@@ -71,9 +67,9 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param cadena
-     * @return 
+     * @return
      */
     public static double convertirCadenaReal(String cadena) {
         double dato = -99999;
@@ -86,9 +82,9 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param cadena
-     * @return 
+     * @return
      */
     public static long convertirCadenaEnteroLargo(String cadena) {
         long dato = -99999;
@@ -101,11 +97,11 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param cadena
      * @param cantidad
      * @param simbolo
-     * @return 
+     * @return
      */
     public static String completarIzquierda(String cadena, int cantidad, String simbolo) {
         String aux = "";
@@ -129,11 +125,11 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param cadena
      * @param cantidad
      * @param simbolo
-     * @return 
+     * @return
      */
     public static String completarDerecha(String cadena, int cantidad, String simbolo) {
         String aux = "";
@@ -157,11 +153,11 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param cadena
      * @param cantidad
      * @param simbolo
-     * @return 
+     * @return
      */
     public static String centrarCadena(String cadena, int cantidad, String simbolo) {
         String aux = "";
@@ -183,8 +179,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getFecha() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -195,8 +191,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getDia() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -205,8 +201,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getMes() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -215,8 +211,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getAnio() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -225,8 +221,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHoraMinSeg() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -237,8 +233,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHoraMin() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -248,8 +244,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHoraMinSegAmPm() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -265,8 +261,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHoraMinAmPm() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -281,8 +277,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHoraMinSegAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -298,8 +294,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHoraMinAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -314,8 +310,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getHora() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -324,8 +320,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getMinuto() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -334,8 +330,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getSegundo() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -344,8 +340,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getDireccionIp() {
         String dato;
@@ -364,8 +360,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getNombreMaquina() {
         String dato;
@@ -384,9 +380,9 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param mes
-     * @return 
+     * @return
      */
     public static String getMesEnLetra(int mes) {
         String dato = "";
@@ -432,8 +428,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getDiaEnLetra() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -467,8 +463,8 @@ public class Base {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public static String getFechaEnLetra() {
         String dato;
@@ -477,18 +473,18 @@ public class Base {
     }
 
     /**
-     * 
+     *
      * @param strMensaje
      * @param strTitulo
-     * @param iTipoIcono 
+     * @param iTipoIcono
      */
     public static void mensaje(String strMensaje, String strTitulo, int iTipoIcono) {
         JOptionPane.showMessageDialog(null, strMensaje, strTitulo, iTipoIcono);
     }
 
     /**
-     * 
-     * @param jfrmVentana 
+     *
+     * @param jfrmVentana
      */
     public static void centrarVentana(JFrame jfrmVentana) {
         try {
@@ -517,23 +513,23 @@ public class Base {
     public static DefaultFormatterFactory creaFormatoControl(
             NumberType tipo, int cantEnt, int cantFra, char caracter) {
         DefaultFormatterFactory factory = null;
-        String cadena = "";
+        String formato = "";
         int i;
 
         for (i = 0; i < cantEnt; i++) {
-            cadena = cadena + "#";
+            formato = formato + "#";
         }
         if (cantFra > 0) {
-            cadena = cadena + ".";
+            formato = formato + ".";
             for (i = 0; i < cantFra; i++) {
-                cadena = cadena + "#";
+                formato = formato + "#";
             }
         }
         MaskFormatter numcase;
         switch (tipo) {
             case ENTERO:
                 try {
-                    numcase = new MaskFormatter(cadena);
+                    numcase = new MaskFormatter(formato);
                     numcase.setPlaceholderCharacter(caracter);
                     numcase.setOverwriteMode(true);
                     numcase.setValidCharacters("0123456789");
@@ -544,7 +540,7 @@ public class Base {
                 break;
             case REAL:
                 try {
-                    numcase = new MaskFormatter(cadena);
+                    numcase = new MaskFormatter(formato);
                     numcase.setPlaceholderCharacter(caracter);
                     numcase.setOverwriteMode(true);
                     numcase.setValidCharacters("0123456789");

@@ -94,7 +94,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
             objData[i][0] = p.getCodigo();
             objData[i][1] = p.getDescripcion();
             objData[i][2] = p.getTotal();
-            objData[i][3] = p.getPrecio();
+            objData[i][3] = Base.formatearNumeroYDigitos(p.getPrecio());
             objData[i][4] = p.isExonerado();
             objData[i][5] = p.isVisible();
         }
@@ -314,7 +314,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
             strTitulo
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
