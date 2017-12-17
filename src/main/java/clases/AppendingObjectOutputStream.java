@@ -13,10 +13,6 @@ public class AppendingObjectOutputStream extends java.io.ObjectOutputStream {
         super(out);
     }
 
-    protected AppendingObjectOutputStream() throws java.io.IOException, SecurityException {
-        super();
-    }
-
     @Override
     protected void writeStreamHeader() throws java.io.IOException {
         // do not write a header, but reset:

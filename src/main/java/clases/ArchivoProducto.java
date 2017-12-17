@@ -1,26 +1,20 @@
 package clases;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author cesardiaz
  */
 public class ArchivoProducto {
 
-    private static final Logger log = LoggerFactory.getLogger(ArchivoProducto.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArchivoProducto.class);
 
     /**
-     *
      * @return
      */
     public static String obtenerNumeroSecuencia() {
@@ -28,7 +22,6 @@ public class ArchivoProducto {
     }
 
     /**
-     *
      * @param producto
      * @param ruta
      */
@@ -37,17 +30,16 @@ public class ArchivoProducto {
                 new FileOutputStream(ruta))) {
             salida.writeObject(producto);
         } catch (IOException e) {
-            log.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error("Error de E/S de Archivo: {}", ruta, e);
         }
     }
 
     /**
-     *
      * @param productos
      * @param ruta
      * @return
      */
-    public static ArrayList<Producto> cargarRegistrosArray(ArrayList<Producto> productos, String ruta) {
+    public static List<Producto> cargarRegistrosArray(ArrayList<Producto> productos, String ruta) {
         try {
             File archivo = new File(ruta);
             if (archivo.exists()) {
@@ -58,22 +50,25 @@ public class ArchivoProducto {
                     }
                 }
             } else {
-                archivo.createNewFile();
-                log.info("Archivo creado en {}", archivo.getAbsolutePath());
+                boolean created = archivo.createNewFile();
+                if (created) {
+                    LOG.info("Archivo creado en {}", archivo.getAbsolutePath());
+                } else {
+                    LOG.warn("Archivo no pudo ser creado");
+                }
             }
         } catch (EOFException e) {
-            log.error("Error de fin de Archivo: {}", ruta);
+            LOG.error("Error de fin de Archivo: {}", ruta);
         } catch (ClassNotFoundException e) {
-            log.error("Clase no encontrada", e);
+            LOG.error("Clase no encontrada", e);
         } catch (IOException e) {
-            log.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error("Error de E/S de Archivo: {}", ruta, e);
         }
 
         return productos;
     }
 
     /**
-     *
      * @param ruta
      * @return
      */
@@ -85,18 +80,17 @@ public class ArchivoProducto {
                 cantidad++;
             }
         } catch (EOFException e) {
-            log.error("Error de fin de Archivo: {}", ruta);
+            LOG.error("Error de fin de Archivo: {}", ruta);
         } catch (ClassNotFoundException e) {
-            log.error("Clase no encontrada", e);
+            LOG.error("Clase no encontrada", e);
         } catch (IOException e) {
-            log.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error("Error de E/S de Archivo: {}", ruta, e);
         }
 
         return cantidad;
     }
 
     /**
-     *
      * @param producto
      * @param ruta
      */
@@ -104,14 +98,13 @@ public class ArchivoProducto {
         try (AppendingObjectOutputStream salida = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
             salida.writeUnshared(producto);
             salida.flush();
-            log.info("Producto agregado: {}", producto);
+            LOG.info("Producto agregado: {}", producto);
         } catch (IOException e) {
-            log.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error("Error de E/S de Archivo: {}", ruta, e);
         }
     }
 
     /**
-     *
      * @param producto
      * @param ruta
      */
@@ -133,15 +126,14 @@ public class ArchivoProducto {
                 for (Producto p : v) {
                     salida.writeObject(p);
                 }
-                log.info("Producto modificado: {}", producto);
+                LOG.info("Producto modificado: {}", producto);
             } catch (IOException ioe) {
-                log.error("Error de E/S de Archivo: {}", ruta, ioe);
+                LOG.error("Error de E/S de Archivo: {}", ruta, ioe);
             }
         }
     }
 
     /**
-     *
      * @param codigo
      * @param ruta
      * @return
@@ -165,16 +157,15 @@ public class ArchivoProducto {
                 for (Producto p : v) {
                     salida.writeObject(p);
                 }
-                log.info("Producto anulado: {}", codigo);
+                LOG.info("Producto anulado: {}", codigo);
             } catch (IOException ioe) {
-                log.error("Error de E/S de Archivo: {}", ruta, ioe);
+                LOG.error("Error de E/S de Archivo: {}", ruta, ioe);
             }
         }
         return band;
     }
 
     /**
-     *
      * @param codigo
      * @param ruta
      * @return

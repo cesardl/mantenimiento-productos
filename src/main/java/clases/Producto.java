@@ -1,7 +1,6 @@
 package clases;
 
 /**
- *
  * @author cesardiaz
  */
 public class Producto implements java.io.Serializable {
@@ -30,7 +29,7 @@ public class Producto implements java.io.Serializable {
     }
 
     public Producto(String codigo, String descripcion, int total, double precio,
-            boolean exonerado, boolean visible) {
+                    boolean exonerado, boolean visible) {
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.total = total;
@@ -40,7 +39,7 @@ public class Producto implements java.io.Serializable {
     }
 
     public Producto(int id, String codigo, String descripcion, int total, double precio,
-            boolean exonerado, boolean visible) {
+                    boolean exonerado, boolean visible) {
         this.id = id;
         this.codigo = codigo;
         this.descripcion = descripcion;
@@ -108,19 +107,11 @@ public class Producto implements java.io.Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("Codigo: ");
-        builder.append(codigo);
-        builder.append("\nDescripcion: ");
-        builder.append(descripcion);
-        builder.append("\nCantidad: ");
-        builder.append(total);
-        builder.append("\nPrecio: ");
-        builder.append(precio);
-        builder.append("\nExonerado: ");
-        builder.append(exonerado);
-        builder.append("\nVisible: ");
-        builder.append(visible);
-
-        return builder.toString();
+        return "Codigo: " + codigo +
+                "\nDescripcion: " + descripcion +
+                "\nCantidad: " + total +
+                "\nPrecio: " + precio +
+                "\nExonerado: " + exonerado +
+                "\nVisible: " + visible;
     }
 }

@@ -1,33 +1,29 @@
 package clases;
 
 import clases.etc.NumberType;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.GregorianCalendar;
-import javax.swing.JOptionPane;
-import javax.swing.JFrame;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.UnknownHostException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.GregorianCalendar;
+
 /**
- *
  * @author cesardiaz
  */
 public class Base {
 
-    private static final Logger log = LoggerFactory.getLogger(Base.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Base.class);
 
     /**
-     *
      * @return
      */
     public static String leerDato() {
@@ -35,15 +31,14 @@ public class Base {
         try (BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in))) {
             dato = teclado.readLine();
         } catch (IOException e) {
-            log.error("Error de Lectura de datos.", e);
+            LOG.error("Error de Lectura de datos.", e);
         }
         return dato;
     }
 
     /**
-     *
-     * @param numero
-     * @return
+     * @param numero numero a formatear
+     * @return el numero formateado
      */
     public static String formatearNumeroYDigitos(double numero) {
         String pattern = "#0.00";
@@ -52,7 +47,6 @@ public class Base {
     }
 
     /**
-     *
      * @param cadena
      * @return
      */
@@ -61,13 +55,12 @@ public class Base {
         try {
             dato = Integer.parseInt(cadena);
         } catch (NumberFormatException nfe) {
-            log.error("Error al convertir - " + cadena + " - a Entero.", nfe);
+            LOG.error("Error al convertir - " + cadena + " - a Entero.", nfe);
         }
         return dato;
     }
 
     /**
-     *
      * @param cadena
      * @return
      */
@@ -76,13 +69,12 @@ public class Base {
         try {
             dato = Double.parseDouble(cadena);
         } catch (NumberFormatException nfe) {
-            log.error("Error al convertir - " + cadena + " - a Real.", nfe);
+            LOG.error("Error al convertir - " + cadena + " - a Real.", nfe);
         }
         return dato;
     }
 
     /**
-     *
      * @param cadena
      * @return
      */
@@ -91,13 +83,12 @@ public class Base {
         try {
             dato = Long.parseLong(cadena);
         } catch (NumberFormatException nfe) {
-            log.error("Error al convertir - " + cadena + " - a Entero largo.", nfe);
+            LOG.error("Error al convertir - " + cadena + " - a Entero largo.", nfe);
         }
         return dato;
     }
 
     /**
-     *
      * @param cadena
      * @param cantidad
      * @param simbolo
@@ -125,7 +116,6 @@ public class Base {
     }
 
     /**
-     *
      * @param cadena
      * @param cantidad
      * @param simbolo
@@ -153,7 +143,6 @@ public class Base {
     }
 
     /**
-     *
      * @param cadena
      * @param cantidad
      * @param simbolo
@@ -179,7 +168,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getFecha() {
@@ -191,7 +179,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getDia() {
@@ -201,7 +188,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getMes() {
@@ -211,7 +197,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getAnio() {
@@ -221,7 +206,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHoraMinSeg() {
@@ -233,7 +217,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHoraMin() {
@@ -244,7 +227,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHoraMinSegAmPm() {
@@ -261,7 +243,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHoraMinAmPm() {
@@ -277,7 +258,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHoraMinSegAmPm2() {
@@ -294,7 +274,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHoraMinAmPm2() {
@@ -310,7 +289,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getHora() {
@@ -320,7 +298,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getMinuto() {
@@ -330,7 +307,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getSegundo() {
@@ -340,7 +316,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getDireccionIp() {
@@ -353,14 +328,13 @@ public class Base {
                 dato = dato.substring(posicion + 1);
             }
         } catch (UnknownHostException uhe) {
-            log.error(uhe.getMessage(), uhe);
+            LOG.error(uhe.getMessage(), uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
     }
 
     /**
-     *
      * @return
      */
     public static String getNombreMaquina() {
@@ -373,14 +347,13 @@ public class Base {
                 dato = dato.substring(0, posicion);
             }
         } catch (UnknownHostException uhe) {
-            log.error(uhe.getMessage(), uhe);
+            LOG.error(uhe.getMessage(), uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
     }
 
     /**
-     *
      * @param mes
      * @return
      */
@@ -428,7 +401,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getDiaEnLetra() {
@@ -463,7 +435,6 @@ public class Base {
     }
 
     /**
-     *
      * @return
      */
     public static String getFechaEnLetra() {
@@ -473,7 +444,6 @@ public class Base {
     }
 
     /**
-     *
      * @param strMensaje
      * @param strTitulo
      * @param iTipoIcono
@@ -483,7 +453,6 @@ public class Base {
     }
 
     /**
-     *
      * @param jfrmVentana
      */
     public static void centrarVentana(JFrame jfrmVentana) {
@@ -498,12 +467,11 @@ public class Base {
             y = (y / 2) - (height / 2);
             jfrmVentana.setBounds(x, y, width, height);
         } catch (HeadlessException he) {
-            log.error(he.getMessage(), he);
+            LOG.error(he.getMessage(), he);
         }
     }
 
     /**
-     *
      * @param tipo
      * @param cantEnt
      * @param cantFra
@@ -535,7 +503,7 @@ public class Base {
                     numcase.setValidCharacters("0123456789");
                     factory = new DefaultFormatterFactory(numcase);
                 } catch (ParseException pe) {
-                    log.error("Error al dar Formato de Numero Entero", pe);
+                    LOG.error("Error al dar Formato de Numero Entero", pe);
                 }
                 break;
             case REAL:
@@ -546,7 +514,7 @@ public class Base {
                     numcase.setValidCharacters("0123456789");
                     factory = new DefaultFormatterFactory(numcase);
                 } catch (ParseException pe) {
-                    log.error("Error al dar Formato de Numero Real", pe);
+                    LOG.error("Error al dar Formato de Numero Real", pe);
                 }
                 break;
         }
