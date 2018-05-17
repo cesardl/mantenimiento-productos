@@ -1,12 +1,12 @@
 package mantenimiento;
 
-import java.io.IOException;
-import java.util.Properties;
-import javax.swing.UIManager;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
- *
  * @author cesardiaz
  */
 public class Main {
@@ -37,13 +37,7 @@ public class Main {
 
             final String path = System.getProperty("user.dir").concat(prop.getProperty("file.data"));
 
-            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    new JFrameRegistro(path).setVisible(true);
-                }
-            });
+            javax.swing.SwingUtilities.invokeLater(() -> new JFrameRegistro(path).setVisible(true));
         } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
         }

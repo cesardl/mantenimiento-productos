@@ -1,10 +1,8 @@
 package clases;
 
 /**
- *
  * @author cesardiaz
- * @see
- * <a href="http://stackoverflow.com/questions/1194656/appending-to-an-objectoutputstream/1195078#1195078">Appending
+ * @see <a href="http://stackoverflow.com/questions/1194656/appending-to-an-objectoutputstream/1195078#1195078">Appending
  * to an ObjectOutputStream</a>
  */
 public class AppendingObjectOutputStream extends java.io.ObjectOutputStream {

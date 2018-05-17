@@ -122,24 +122,24 @@ public class Base {
      * @return
      */
     public static String completarDerecha(String cadena, int cantidad, String simbolo) {
-        String aux = "";
+        StringBuilder aux = new StringBuilder();
         double veces = cantidad;
 
         veces = veces / simbolo.length();
         veces = Math.ceil(veces);
 
         for (int i = 0; i < veces; i++) {
-            aux = aux + simbolo;
+            aux.append(simbolo);
         }
 
         if (cantidad - cadena.length() >= 0) {
-            aux = cadena + aux;
-            aux = aux.substring(0, cantidad);
+            aux.insert(0, cadena);
+            aux = new StringBuilder(aux.substring(0, cantidad));
         } else {
-            aux = cadena.substring(0, cantidad);
+            aux = new StringBuilder(cadena.substring(0, cantidad));
         }
 
-        return aux;
+        return aux.toString();
     }
 
     /**
@@ -183,8 +183,7 @@ public class Base {
      */
     public static String getDia() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
     }
 
     /**
@@ -192,8 +191,7 @@ public class Base {
      */
     public static String getMes() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
-        return dato;
+        return completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
     }
 
     /**
@@ -201,8 +199,7 @@ public class Base {
      */
     public static String getAnio() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
     }
 
     /**
@@ -293,8 +290,7 @@ public class Base {
      */
     public static String getHora() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
     }
 
     /**
@@ -302,8 +298,7 @@ public class Base {
      */
     public static String getMinuto() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
-        return dato;
+        return completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
     }
 
     /**
@@ -311,8 +306,7 @@ public class Base {
      */
     public static String getSegundo() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
     }
 
     /**
@@ -481,23 +475,23 @@ public class Base {
     public static DefaultFormatterFactory creaFormatoControl(
             NumberType tipo, int cantEnt, int cantFra, char caracter) {
         DefaultFormatterFactory factory = null;
-        String formato = "";
+        StringBuilder formato = new StringBuilder();
         int i;
 
         for (i = 0; i < cantEnt; i++) {
-            formato = formato + "#";
+            formato.append("#");
         }
         if (cantFra > 0) {
-            formato = formato + ".";
+            formato.append(".");
             for (i = 0; i < cantFra; i++) {
-                formato = formato + "#";
+                formato.append("#");
             }
         }
         MaskFormatter numcase;
         switch (tipo) {
             case ENTERO:
                 try {
-                    numcase = new MaskFormatter(formato);
+                    numcase = new MaskFormatter(formato.toString());
                     numcase.setPlaceholderCharacter(caracter);
                     numcase.setOverwriteMode(true);
                     numcase.setValidCharacters("0123456789");
@@ -508,7 +502,7 @@ public class Base {
                 break;
             case REAL:
                 try {
-                    numcase = new MaskFormatter(formato);
+                    numcase = new MaskFormatter(formato.toString());
                     numcase.setPlaceholderCharacter(caracter);
                     numcase.setOverwriteMode(true);
                     numcase.setValidCharacters("0123456789");
