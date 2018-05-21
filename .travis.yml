@@ -16,7 +16,10 @@ cache:
   directories:
     - $HOME/.m2
     - $HOME/.sonar/cache
+    - $HOME/.sonarscanner
 
 script:
-  - xvfb-run mvn clean verify
-  - - sonar-scanner
+  - echo $PATH
+  - ls -lh $SONAR_SCANNER_HOME
+  - mvn clean verify
+  - sonar-scanner -X

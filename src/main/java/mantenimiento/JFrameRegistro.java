@@ -580,7 +580,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         );
 
         pack();
-        setLocationRelativeTo(null);
+        Base.centrarVentana(this);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override

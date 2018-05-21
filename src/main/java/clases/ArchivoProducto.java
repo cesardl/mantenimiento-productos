@@ -26,8 +26,7 @@ public class ArchivoProducto {
      * @param ruta
      */
     public static void crearArchivo(Producto producto, String ruta) {
-        try (ObjectOutputStream salida = new ObjectOutputStream(
-                new FileOutputStream(ruta))) {
+        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
             salida.writeObject(producto);
         } catch (IOException e) {
             LOG.error("Error de E/S de Archivo: {}", ruta, e);
@@ -52,7 +51,7 @@ public class ArchivoProducto {
             } else {
                 boolean created = archivo.createNewFile();
                 if (created) {
-                    LOG.info("Archivo creado en {}", archivo.getAbsolutePath());
+                    LOG.debug("Archivo creado en {}", archivo.getAbsolutePath());
                 } else {
                     LOG.warn("Archivo no pudo ser creado");
                 }

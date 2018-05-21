@@ -13,8 +13,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * @author cesardiaz
@@ -42,8 +44,9 @@ public class Base {
      */
     public static String formatearNumeroYDigitos(double numero) {
         String pattern = "#0.00";
-        DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        return decimalFormat.format(numero);
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH);
+
+        return new DecimalFormat(pattern, symbols).format(numero);
     }
 
     /**
@@ -455,8 +458,12 @@ public class Base {
             int x, y, width, height;
             x = ((int) tamPantalla.getWidth());
             y = ((int) tamPantalla.getHeight());
+            LOG.debug("Tamanho de pantalla ({}, {})", x, y);
+
             width = ((int) jfrmVentana.getSize().getWidth());
             height = ((int) jfrmVentana.getSize().getHeight());
+            LOG.debug("Dimensión de la aplicacion ({}, {})",width, height);
+
             x = (x / 2) - (width / 2);
             y = (y / 2) - (height / 2);
             jfrmVentana.setBounds(x, y, width, height);
