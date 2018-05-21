@@ -1,7 +1,6 @@
 language: java
-
-jdk:
-  oraclejdk8
+sudo: false
+install: true
 
 addons:
   apt:
@@ -12,14 +11,15 @@ addons:
     token:
       secure: $SONAR_TOKEN # encrypted value of your token
 
+jdk:
+  oraclejdk8
+
+script:
+  - mvn clean verify
+  - sonar-scanner -X
+
 cache:
   directories:
     - $HOME/.m2
     - $HOME/.sonar/cache
     - $HOME/.sonarscanner
-
-script:
-  - echo $PATH
-  - ls -lh $SONAR_SCANNER_HOME
-  - mvn clean verify
-  - sonar-scanner -X
