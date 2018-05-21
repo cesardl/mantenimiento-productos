@@ -13,15 +13,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * @author cesardiaz
  */
-public class Base {
+public final class Base {
 
     private static final Logger LOG = LoggerFactory.getLogger(Base.class);
+
+    private Base() {
+    }
 
     /**
      * @return
@@ -42,8 +47,9 @@ public class Base {
      */
     public static String formatearNumeroYDigitos(double numero) {
         String pattern = "#0.00";
-        DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        return decimalFormat.format(numero);
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH);
+
+        return new DecimalFormat(pattern, symbols).format(numero);
     }
 
     /**
@@ -55,7 +61,7 @@ public class Base {
         try {
             dato = Integer.parseInt(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - " + cadena + " - a Entero.", nfe);
+            LOG.error("Error al convertir - {} - a Entero.", cadena, nfe);
         }
         return dato;
     }
@@ -69,7 +75,7 @@ public class Base {
         try {
             dato = Double.parseDouble(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - " + cadena + " - a Real.", nfe);
+            LOG.error("Error al convertir - {} - a Real.", cadena, nfe);
         }
         return dato;
     }
@@ -83,7 +89,7 @@ public class Base {
         try {
             dato = Long.parseLong(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - " + cadena + " - a Entero largo.", nfe);
+            LOG.error("Error al convertir - {} - a Entero largo.", cadena, nfe);
         }
         return dato;
     }
@@ -122,24 +128,24 @@ public class Base {
      * @return
      */
     public static String completarDerecha(String cadena, int cantidad, String simbolo) {
-        String aux = "";
+        StringBuilder aux = new StringBuilder();
         double veces = cantidad;
 
         veces = veces / simbolo.length();
         veces = Math.ceil(veces);
 
         for (int i = 0; i < veces; i++) {
-            aux = aux + simbolo;
+            aux.append(simbolo);
         }
 
         if (cantidad - cadena.length() >= 0) {
-            aux = cadena + aux;
-            aux = aux.substring(0, cantidad);
+            aux.insert(0, cadena);
+            aux = new StringBuilder(aux.substring(0, cantidad));
         } else {
-            aux = cadena.substring(0, cantidad);
+            aux = new StringBuilder(cadena.substring(0, cantidad));
         }
 
-        return aux;
+        return aux.toString();
     }
 
     /**
@@ -183,8 +189,7 @@ public class Base {
      */
     public static String getDia() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
     }
 
     /**
@@ -192,8 +197,7 @@ public class Base {
      */
     public static String getMes() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
-        return dato;
+        return completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
     }
 
     /**
@@ -201,8 +205,7 @@ public class Base {
      */
     public static String getAnio() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
     }
 
     /**
@@ -293,8 +296,7 @@ public class Base {
      */
     public static String getHora() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
     }
 
     /**
@@ -302,8 +304,7 @@ public class Base {
      */
     public static String getMinuto() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
-        return dato;
+        return completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
     }
 
     /**
@@ -311,8 +312,7 @@ public class Base {
      */
     public static String getSegundo() {
         GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
-        return dato;
+        return completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
     }
 
     /**
@@ -461,8 +461,12 @@ public class Base {
             int x, y, width, height;
             x = ((int) tamPantalla.getWidth());
             y = ((int) tamPantalla.getHeight());
+            LOG.debug("Tamanho de pantalla ({}, {})", x, y);
+
             width = ((int) jfrmVentana.getSize().getWidth());
             height = ((int) jfrmVentana.getSize().getHeight());
+            LOG.debug("Dimensión de la aplicacion ({}, {})", width, height);
+
             x = (x / 2) - (width / 2);
             y = (y / 2) - (height / 2);
             jfrmVentana.setBounds(x, y, width, height);
@@ -481,23 +485,23 @@ public class Base {
     public static DefaultFormatterFactory creaFormatoControl(
             NumberType tipo, int cantEnt, int cantFra, char caracter) {
         DefaultFormatterFactory factory = null;
-        String formato = "";
+        StringBuilder formato = new StringBuilder();
         int i;
 
         for (i = 0; i < cantEnt; i++) {
-            formato = formato + "#";
+            formato.append("#");
         }
         if (cantFra > 0) {
-            formato = formato + ".";
+            formato.append(".");
             for (i = 0; i < cantFra; i++) {
-                formato = formato + "#";
+                formato.append("#");
             }
         }
         MaskFormatter numcase;
         switch (tipo) {
             case ENTERO:
                 try {
-                    numcase = new MaskFormatter(formato);
+                    numcase = new MaskFormatter(formato.toString());
                     numcase.setPlaceholderCharacter(caracter);
                     numcase.setOverwriteMode(true);
                     numcase.setValidCharacters("0123456789");
@@ -508,7 +512,7 @@ public class Base {
                 break;
             case REAL:
                 try {
-                    numcase = new MaskFormatter(formato);
+                    numcase = new MaskFormatter(formato.toString());
                     numcase.setPlaceholderCharacter(caracter);
                     numcase.setOverwriteMode(true);
                     numcase.setValidCharacters("0123456789");

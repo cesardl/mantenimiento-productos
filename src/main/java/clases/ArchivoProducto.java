@@ -6,28 +6,31 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author cesardiaz
  */
-public class ArchivoProducto {
+public final class ArchivoProducto {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArchivoProducto.class);
 
-    /**
-     * @return
-     */
-    public static String obtenerNumeroSecuencia() {
-        return Base.completarIzquierda(String.valueOf((int) Math.round(Math.random() * 10000)), 5, "0");
+    private ArchivoProducto() {
     }
 
     /**
-     * @param producto
-     * @param ruta
+     * @return cadena numerica aleatoria
+     */
+    public static String obtenerNumeroSecuencia() {
+        return Base.completarIzquierda(String.valueOf(new Random().nextInt(10000)), 5, "0");
+    }
+
+    /**
+     * @param producto producto a agregar
+     * @param ruta     ubicacion del fichero de datos
      */
     public static void crearArchivo(Producto producto, String ruta) {
-        try (ObjectOutputStream salida = new ObjectOutputStream(
-                new FileOutputStream(ruta))) {
+        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
             salida.writeObject(producto);
         } catch (IOException e) {
             LOG.error("Error de E/S de Archivo: {}", ruta, e);
@@ -35,11 +38,10 @@ public class ArchivoProducto {
     }
 
     /**
-     * @param productos
-     * @param ruta
-     * @return
+     * @param productos objeto destino
+     * @param ruta      ubicacion del fichero de datos
      */
-    public static List<Producto> cargarRegistrosArray(ArrayList<Producto> productos, String ruta) {
+    public static void cargarRegistrosArray(List<Producto> productos, String ruta) {
         try {
             File archivo = new File(ruta);
             if (archivo.exists()) {
@@ -52,7 +54,7 @@ public class ArchivoProducto {
             } else {
                 boolean created = archivo.createNewFile();
                 if (created) {
-                    LOG.info("Archivo creado en {}", archivo.getAbsolutePath());
+                    LOG.debug("Archivo creado en {}", archivo.getAbsolutePath());
                 } else {
                     LOG.warn("Archivo no pudo ser creado");
                 }
@@ -64,13 +66,11 @@ public class ArchivoProducto {
         } catch (IOException e) {
             LOG.error("Error de E/S de Archivo: {}", ruta, e);
         }
-
-        return productos;
     }
 
     /**
-     * @param ruta
-     * @return
+     * @param ruta ubicacion del fichero de datos
+     * @return total de registros
      */
     public static int cantidadRegistros(String ruta) {
         int cantidad = 0;
@@ -91,8 +91,8 @@ public class ArchivoProducto {
     }
 
     /**
-     * @param producto
-     * @param ruta
+     * @param producto producto a agregar
+     * @param ruta     ubicacion del fichero de datos
      */
     public static void adicionarRegistro(Producto producto, String ruta) {
         try (AppendingObjectOutputStream salida = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
@@ -105,8 +105,8 @@ public class ArchivoProducto {
     }
 
     /**
-     * @param producto
-     * @param ruta
+     * @param producto producto a modificar
+     * @param ruta     ubicacion del fichero de datos
      */
     public static void modificarRegistro(Producto producto, String ruta) {
         boolean band = false;
@@ -134,9 +134,9 @@ public class ArchivoProducto {
     }
 
     /**
-     * @param codigo
-     * @param ruta
-     * @return
+     * @param codigo codigo de producto a anular
+     * @param ruta   ubicacion del fichero de datos
+     * @return registro anulado
      */
     public static boolean anularRegistro(String codigo, String ruta) {
         boolean band = false;
@@ -166,21 +166,22 @@ public class ArchivoProducto {
     }
 
     /**
-     * @param codigo
-     * @param ruta
-     * @return
+     * @param codigo codigo de producto a buscar
+     * @param ruta   ubicacion del fichero de datos
+     * @return registro consultado
      */
-    public static String consultarRegistro(String codigo, String ruta) {
+    public static String consultarRegistro(final String codigo, String ruta) {
         ArrayList<Producto> v = new ArrayList<>();
 
         cargarRegistrosArray(v, ruta);
 
-        for (Producto p : v) {
-            if (p.getCodigo().compareTo(codigo) == 0) {
-                return p.toString();
-            }
-        }
-        return "";
+        LOG.info("Buscando registro con codigo '{}'", codigo);
+
+        return v.stream()
+                .filter(p -> p.getCodigo().compareTo(codigo) == 0)
+                .findFirst()
+                .map(Producto::toString)
+                .orElse("");
     }
 
 }

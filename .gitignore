@@ -12,3 +12,6 @@ nbactions.xml
 # IntelliJ IDEA
 .idea/
 *.iml
+
+# Sonarqube
+.scannerwork/

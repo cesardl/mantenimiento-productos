@@ -5,12 +5,12 @@ import clases.Base;
 import clases.Producto;
 import clases.etc.ActionType;
 import clases.etc.NumberType;
-import java.awt.Component;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 
 /**
- *
  * @author cesardiaz
  */
 public final class JFrameRegistro extends javax.swing.JFrame
@@ -19,13 +19,28 @@ public final class JFrameRegistro extends javax.swing.JFrame
     private static final int iNumColumna = 6;
 
     private static final String strTitulo[] = {
-        "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
+            "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
     };
 
     private final String strRuta;
 
     private ActionType currentAction;
     private ArrayList<Producto> vProductos;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAnular;
+    private javax.swing.JButton jButtonConsultar;
+    private javax.swing.JButton jButtonEdit;
+    private javax.swing.JButton jButtonGrabar;
+    private javax.swing.JButton jButtonNuevo;
+    private javax.swing.JButton jButtonSalir;
+    private javax.swing.JCheckBox jCheckBoxExonerado;
+    private javax.swing.JCheckBox jCheckBoxVisible;
+    private javax.swing.JFormattedTextField jFormattedTextFieldCantidad;
+    private javax.swing.JFormattedTextField jFormattedTextFieldDescripcion;
+    private javax.swing.JFormattedTextField jFormattedTextFieldPrecio;
+    private javax.swing.JPanel jPanelRegistro;
+    private javax.swing.JTable jTableDato;
+    private javax.swing.JTextField jTextFieldCodigo;
 
     public JFrameRegistro(String strRuta) {
         this.strRuta = strRuta;
@@ -157,7 +172,6 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private boolean grabarRegistroArchivo() {
-        boolean bValor = true;
         Producto producto = new Producto(
                 ArchivoProducto.obtenerNumeroSecuencia(),
                 jFormattedTextFieldDescripcion.getText().trim(),
@@ -172,7 +186,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
             ArchivoProducto.adicionarRegistro(producto, strRuta);
         }
         jTextFieldCodigo.setText(producto.getCodigo());
-        return bValor;
+        return true;
     }
 
     private void postGrabarRegistro() {
@@ -184,7 +198,6 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private boolean editarRegistroArchivo() {
-        boolean bValor = true;
         Producto producto = new Producto(
                 jTextFieldCodigo.getText(),
                 jFormattedTextFieldDescripcion.getText().trim(),
@@ -195,7 +208,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         ArchivoProducto.modificarRegistro(producto, strRuta);
         jTextFieldCodigo.setText(producto.getCodigo());
-        return bValor;
+        return true;
     }
 
     private void postEditarRegistro() {
@@ -310,22 +323,22 @@ public final class JFrameRegistro extends javax.swing.JFrame
         javax.swing.JScrollPane jScrollPaneDato = new javax.swing.JScrollPane();
         jTableDato = new javax.swing.JTable();
         javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
-            getTableData(),
-            strTitulo
+                getTableData(),
+                strTitulo
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+            Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         };
 
@@ -334,7 +347,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         setMinimumSize(new java.awt.Dimension(850, 320));
 
         jButtonNuevo.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonNuevo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButtonNuevo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jButtonNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.gif")));
         jButtonNuevo.setMnemonic('N');
         jButtonNuevo.setToolTipText("Nuevo Registro");
@@ -347,7 +360,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonNuevo);
 
         jButtonConsultar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonConsultar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButtonConsultar.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jButtonConsultar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/consultar.gif")));
         jButtonConsultar.setMnemonic('C');
         jButtonConsultar.setToolTipText("Consultar Registro");
@@ -360,7 +373,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonConsultar);
 
         jButtonGrabar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonGrabar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButtonGrabar.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jButtonGrabar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/grabar.gif")));
         jButtonGrabar.setMnemonic('G');
         jButtonGrabar.setToolTipText("Grabar Registro");
@@ -374,7 +387,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonGrabar);
 
         jButtonEdit.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonEdit.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButtonEdit.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jButtonEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/edit.gif")));
         jButtonEdit.setMnemonic('E');
         jButtonEdit.setToolTipText("Editar Registro");
@@ -388,7 +401,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonEdit);
 
         jButtonAnular.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonAnular.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButtonAnular.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jButtonAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/anular.gif")));
         jButtonAnular.setMnemonic('A');
         jButtonAnular.setToolTipText("Anular Registro");
@@ -401,7 +414,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonAnular);
 
         jButtonSalir.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonSalir.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButtonSalir.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jButtonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/salir.gif")));
         jButtonSalir.setMnemonic('S');
         jButtonSalir.setToolTipText("Salir de la Programa");
@@ -428,7 +441,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jLabelPrecio.setText("Precio:");
 
         jTextFieldCodigo.setEditable(false);
-        jTextFieldCodigo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldCodigo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
         jTextFieldCodigo.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
         jFormattedTextFieldDescripcion.requestFocus();
@@ -459,67 +472,67 @@ public final class JFrameRegistro extends javax.swing.JFrame
         javax.swing.GroupLayout jPanelRegistroLayout = new javax.swing.GroupLayout(jPanelRegistro);
         jPanelRegistro.setLayout(jPanelRegistroLayout);
         jPanelRegistroLayout.setHorizontalGroup(
-            jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabelCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                    .addComponent(jLabelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldCodigo)
-                    .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                        .addGap(1, 1, 1)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                        .addGap(53, 53, 53)
-                        .addComponent(jCheckBoxExonerado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jFormattedTextFieldDescripcion))
-                .addContainerGap())
+                jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabelCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                        .addComponent(jLabelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jTextFieldCodigo)
+                                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
+                                                .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                                                .addGap(1, 1, 1)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabelPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
+                                                .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                                                .addGap(53, 53, 53)
+                                                .addComponent(jCheckBoxExonerado)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jFormattedTextFieldDescripcion))
+                                .addContainerGap())
         );
         jPanelRegistroLayout.setVerticalGroup(
-            jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFormattedTextFieldDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelCodigo)
-                    .addComponent(jTextFieldCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDescripcion))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBoxVisible)
-                    .addComponent(jLabelCantidad)
-                    .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelPrecio)
-                    .addComponent(jCheckBoxExonerado))
-                .addContainerGap(13, Short.MAX_VALUE))
+                jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
+                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jFormattedTextFieldDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelCodigo)
+                                        .addComponent(jTextFieldCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelDescripcion))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jCheckBoxVisible)
+                                        .addComponent(jLabelCantidad)
+                                        .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelPrecio)
+                                        .addComponent(jCheckBoxExonerado))
+                                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanelCabeceraLayout = new javax.swing.GroupLayout(jPanelCabecera);
         jPanelCabecera.setLayout(jPanelCabeceraLayout);
         jPanelCabeceraLayout.setHorizontalGroup(
-            jPanelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelCabeceraLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                jPanelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelCabeceraLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanelRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         jPanelCabeceraLayout.setVerticalGroup(
-            jPanelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelCabeceraLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                jPanelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelCabeceraLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanelRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jPanelDetalle.setBackground(new java.awt.Color(255, 255, 255));
@@ -534,40 +547,40 @@ public final class JFrameRegistro extends javax.swing.JFrame
         javax.swing.GroupLayout jPanelDetalleLayout = new javax.swing.GroupLayout(jPanelDetalle);
         jPanelDetalle.setLayout(jPanelDetalleLayout);
         jPanelDetalleLayout.setHorizontalGroup(
-            jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDetalleLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                .addContainerGap())
+                jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelDetalleLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         jPanelDetalleLayout.setVerticalGroup(
-            jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDetalleLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                .addContainerGap())
+                jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelDetalleLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
-            .addComponent(jPanelCabecera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jToolBarRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
+                        .addComponent(jPanelCabecera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBarRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jToolBarRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanelCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
-        setLocationRelativeTo(null);
+        Base.centrarVentana(this);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
@@ -620,20 +633,5 @@ public final class JFrameRegistro extends javax.swing.JFrame
     @Override
     public void keyReleased(java.awt.event.KeyEvent ke) {
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAnular;
-    private javax.swing.JButton jButtonConsultar;
-    private javax.swing.JButton jButtonEdit;
-    private javax.swing.JButton jButtonGrabar;
-    private javax.swing.JButton jButtonNuevo;
-    private javax.swing.JButton jButtonSalir;
-    private javax.swing.JCheckBox jCheckBoxExonerado;
-    private javax.swing.JCheckBox jCheckBoxVisible;
-    private javax.swing.JFormattedTextField jFormattedTextFieldCantidad;
-    private javax.swing.JFormattedTextField jFormattedTextFieldDescripcion;
-    private javax.swing.JFormattedTextField jFormattedTextFieldPrecio;
-    private javax.swing.JPanel jPanelRegistro;
-    private javax.swing.JTable jTableDato;
-    private javax.swing.JTextField jTextFieldCodigo;
     // End of variables declaration//GEN-END:variables
 }
