@@ -21,9 +21,12 @@ import java.util.Locale;
 /**
  * @author cesardiaz
  */
-public class Base {
+public final class Base {
 
     private static final Logger LOG = LoggerFactory.getLogger(Base.class);
+
+    private Base() {
+    }
 
     /**
      * @return
@@ -58,7 +61,7 @@ public class Base {
         try {
             dato = Integer.parseInt(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - " + cadena + " - a Entero.", nfe);
+            LOG.error("Error al convertir - {} - a Entero.", cadena, nfe);
         }
         return dato;
     }
@@ -72,7 +75,7 @@ public class Base {
         try {
             dato = Double.parseDouble(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - " + cadena + " - a Real.", nfe);
+            LOG.error("Error al convertir - {} - a Real.", cadena, nfe);
         }
         return dato;
     }
@@ -86,7 +89,7 @@ public class Base {
         try {
             dato = Long.parseLong(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - " + cadena + " - a Entero largo.", nfe);
+            LOG.error("Error al convertir - {} - a Entero largo.", cadena, nfe);
         }
         return dato;
     }
@@ -462,7 +465,7 @@ public class Base {
 
             width = ((int) jfrmVentana.getSize().getWidth());
             height = ((int) jfrmVentana.getSize().getHeight());
-            LOG.debug("Dimensión de la aplicacion ({}, {})",width, height);
+            LOG.debug("Dimensión de la aplicacion ({}, {})", width, height);
 
             x = (x / 2) - (width / 2);
             y = (y / 2) - (height / 2);

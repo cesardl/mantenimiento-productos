@@ -14,9 +14,12 @@ addons:
 jdk:
   oraclejdk8
 
+git:
+  depth: 3
+
 script:
   - mvn clean verify
-  - sonar-scanner -X
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then sonar-scanner; fi
 
 cache:
   directories:
