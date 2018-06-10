@@ -28,4 +28,22 @@ public class BaseTest {
         result = Base.convertirCadenaEntero("abc");
         assertEquals(-99999, result);
     }
+
+    @Test
+    public void convertirCadenaReal() {
+        double result = Base.convertirCadenaReal("11.9");
+        assertEquals(11.9, result, 0);
+
+        result = Base.convertirCadenaReal("abc");
+        assertEquals(-99999, result, 0);
+    }
+
+    @Test
+    public void convertirCadenaEnteroLargo() {
+        long result = Base.convertirCadenaEnteroLargo("1111111");
+        assertEquals(1111111, result);
+
+        result = Base.convertirCadenaEnteroLargo("abc");
+        assertEquals(-99999, result);
+    }
 }

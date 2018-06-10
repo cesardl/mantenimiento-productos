@@ -5,6 +5,7 @@ import clases.Base;
 import clases.Producto;
 import clases.etc.ActionType;
 import clases.etc.NumberType;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,12 @@ import java.util.ArrayList;
  */
 public final class JFrameRegistro extends javax.swing.JFrame
         implements java.awt.event.ActionListener, java.awt.event.KeyListener {
+
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(JFrameRegistro.class);
+
+    private enum EstadoBotonesAccion {
+        NUEVO, EDITAR
+    }
 
     private static final int iNumColumna = 6;
 
@@ -32,6 +39,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
     private javax.swing.JButton jButtonEdit;
     private javax.swing.JButton jButtonGrabar;
     private javax.swing.JButton jButtonNuevo;
+    private javax.swing.JButton jButtonInfo;
     private javax.swing.JButton jButtonSalir;
     private javax.swing.JCheckBox jCheckBoxExonerado;
     private javax.swing.JCheckBox jCheckBoxVisible;
@@ -59,23 +67,26 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jCheckBoxVisible.setSelected(true);
     }
 
-    private void controlarEstadoBotonesBarraHerramienta(int opcion) {
+    private void controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion opcion) {
         switch (opcion) {
-            case 1:
-                jButtonGrabar.setEnabled(false);
-
-                jButtonConsultar.setEnabled(true);
-                jButtonEdit.setEnabled(true);
-                jButtonAnular.setEnabled(true);
-                jButtonSalir.setEnabled(true);
-                break;
-            case 2:// Nuevo
+            case NUEVO:
                 jButtonGrabar.setEnabled(true);
 
                 jButtonConsultar.setEnabled(false);
                 jButtonEdit.setEnabled(false);
                 jButtonAnular.setEnabled(false);
+                jButtonInfo.setEnabled(false);
                 jButtonSalir.setEnabled(false);
+                break;
+
+            case EDITAR:
+                jButtonGrabar.setEnabled(false);
+
+                jButtonConsultar.setEnabled(true);
+                jButtonEdit.setEnabled(true);
+                jButtonAnular.setEnabled(true);
+                jButtonInfo.setEnabled(true);
+                jButtonSalir.setEnabled(true);
                 break;
         }
     }
@@ -120,7 +131,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         currentAction = ActionType.NEW;
 
         limpiarRegistro();
-        controlarEstadoBotonesBarraHerramienta(2);
+        controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.NUEVO);
         controlarEstadoPanelIngresoDeDatos(true);
         jFormattedTextFieldDescripcion.requestFocus();
     }
@@ -191,7 +202,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void postGrabarRegistro() {
         mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(1);
+        controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.EDITAR);
         controlarEstadoPanelIngresoDeDatos(false);
         Base.mensaje("Se grabo el registro satisfactoriamente.",
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
@@ -213,7 +224,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void postEditarRegistro() {
         mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(1);
+        controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.EDITAR);
         controlarEstadoPanelIngresoDeDatos(false);
         limpiarRegistro();
         Base.mensaje("Se actualizo el registro satisfactoriamente.",
@@ -250,7 +261,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
             } else {
                 Producto prod = vProductos.get(selectedRow);
 
-                controlarEstadoBotonesBarraHerramienta(2);
+                controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.NUEVO);
                 controlarEstadoPanelIngresoDeDatos(true);
 
                 String[] price = String.valueOf(prod.getPrecio()).split("\\.");
@@ -290,6 +301,12 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
     }
 
+    private void info() {
+        String mensaje = String.format("%s@%s\n%s %s", Base.getNombreMaquina(), Base.getDireccionIp(), Base.getFecha(), Base.getHoraMinAmPm2());
+        log.debug(mensaje);
+        Base.mensaje(mensaje, getTitle(), JOptionPane.PLAIN_MESSAGE);
+    }
+
     private void salirRegistro() {
         if (JOptionPane.showConfirmDialog(this, "Seguro que desea salir?",
                 getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -306,6 +323,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonGrabar = new javax.swing.JButton();
         jButtonEdit = new javax.swing.JButton();
         jButtonAnular = new javax.swing.JButton();
+        jButtonInfo = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
         javax.swing.JPanel jPanelCabecera = new javax.swing.JPanel();
         jPanelRegistro = new javax.swing.JPanel();
@@ -412,6 +430,19 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonAnular.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButtonAnular.addActionListener(this);
         jToolBarRegistro.add(jButtonAnular);
+
+        jButtonInfo.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonInfo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/info.gif")));
+        jButtonInfo.setMnemonic('H');
+        jButtonInfo.setToolTipText("Ayuda");
+        jButtonInfo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonInfo.setHideActionText(true);
+        jButtonInfo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonInfo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButtonInfo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonInfo.addActionListener(this);
+        jToolBarRegistro.add(jButtonInfo);
 
         jButtonSalir.setBackground(new java.awt.Color(255, 255, 255));
         jButtonSalir.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
@@ -599,6 +630,9 @@ public final class JFrameRegistro extends javax.swing.JFrame
         }
         if (ae.getSource().equals(jButtonAnular)) {
             anularRegistro();
+        }
+        if (ae.getSource().equals(jButtonInfo)) {
+            info();
         }
         if (ae.getSource().equals(jButtonSalir)) {
             salirRegistro();

@@ -53,8 +53,8 @@ public final class Base {
     }
 
     /**
-     * @param cadena
-     * @return
+     * @param cadena a convertir
+     * @return el valor convertido a entero
      */
     public static int convertirCadenaEntero(String cadena) {
         int dato = -99999;
@@ -67,8 +67,8 @@ public final class Base {
     }
 
     /**
-     * @param cadena
-     * @return
+     * @param cadena a convertir
+     * @return el valor convertido a real
      */
     public static double convertirCadenaReal(String cadena) {
         double dato = -99999;
@@ -81,8 +81,8 @@ public final class Base {
     }
 
     /**
-     * @param cadena
-     * @return
+     * @param cadena a convertir
+     * @return el valor convertido a entero largo
      */
     public static long convertirCadenaEnteroLargo(String cadena) {
         long dato = -99999;
@@ -101,24 +101,24 @@ public final class Base {
      * @return
      */
     public static String completarIzquierda(String cadena, int cantidad, String simbolo) {
-        String aux = "";
+        StringBuilder aux = new StringBuilder();
         double veces = cantidad;
 
         veces = veces / simbolo.length();
         veces = Math.ceil(veces);
 
         for (int i = 0; i < veces; i++) {
-            aux = aux + simbolo;
+            aux.append(simbolo);
         }
 
         if (cantidad - cadena.length() >= 0) {
-            aux = aux.substring(0, cantidad - cadena.length());
-            aux = aux + cadena;
+            aux = new StringBuilder(aux.substring(0, cantidad - cadena.length()));
+            aux.append(cadena);
         } else {
-            aux = cadena.substring(0, cantidad);
+            aux = new StringBuilder(cadena.substring(0, cantidad));
         }
 
-        return aux;
+        return aux.toString();
     }
 
     /**
@@ -156,9 +156,12 @@ public final class Base {
      */
     public static String centrarCadena(String cadena, int cantidad, String simbolo) {
         String aux = "";
-        String cadenaD, cadenaI;
-        int tamanio, tamanioI;
-        int cantidadD, cantidadI;
+        String cadenaD;
+        String cadenaI;
+        int tamanio;
+        int tamanioI;
+        int cantidadD;
+        int cantidadI;
 
         if (cantidad - cadena.length() > 0) {
             tamanio = cadena.length();
@@ -316,7 +319,7 @@ public final class Base {
     }
 
     /**
-     * @return
+     * @return obtiene la direccion IP de la PC
      */
     public static String getDireccionIp() {
         String dato;
@@ -329,7 +332,7 @@ public final class Base {
             }
         } catch (UnknownHostException uhe) {
             LOG.error(uhe.getMessage(), uhe);
-            dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
+            dato = "No se encontro LocalHost: " + uhe.toString() + " " + uhe.getMessage();
         }
         return dato;
     }
@@ -444,16 +447,16 @@ public final class Base {
     }
 
     /**
-     * @param strMensaje
-     * @param strTitulo
-     * @param iTipoIcono
+     * @param strMensaje mensaje a mostrar
+     * @param strTitulo  titulo de la ventana
+     * @param iTipoIcono tipo de mensaje
      */
     public static void mensaje(String strMensaje, String strTitulo, int iTipoIcono) {
         JOptionPane.showMessageDialog(null, strMensaje, strTitulo, iTipoIcono);
     }
 
     /**
-     * @param jfrmVentana
+     * @param jfrmVentana ventana a centrar
      */
     public static void centrarVentana(JFrame jfrmVentana) {
         try {
@@ -482,8 +485,7 @@ public final class Base {
      * @param caracter
      * @return
      */
-    public static DefaultFormatterFactory creaFormatoControl(
-            NumberType tipo, int cantEnt, int cantFra, char caracter) {
+    public static DefaultFormatterFactory creaFormatoControl(NumberType tipo, int cantEnt, int cantFra, char caracter) {
         DefaultFormatterFactory factory = null;
         StringBuilder formato = new StringBuilder();
         int i;
@@ -500,16 +502,6 @@ public final class Base {
         MaskFormatter numcase;
         switch (tipo) {
             case ENTERO:
-                try {
-                    numcase = new MaskFormatter(formato.toString());
-                    numcase.setPlaceholderCharacter(caracter);
-                    numcase.setOverwriteMode(true);
-                    numcase.setValidCharacters("0123456789");
-                    factory = new DefaultFormatterFactory(numcase);
-                } catch (ParseException pe) {
-                    LOG.error("Error al dar Formato de Numero Entero", pe);
-                }
-                break;
             case REAL:
                 try {
                     numcase = new MaskFormatter(formato.toString());
