@@ -1,7 +1,7 @@
 package org.sanmarcux.clases.etc;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  */
 public enum ActionType {
 

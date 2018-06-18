@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  */
 public final class JFrameRegistro extends javax.swing.JFrame
         implements java.awt.event.ActionListener, java.awt.event.KeyListener {

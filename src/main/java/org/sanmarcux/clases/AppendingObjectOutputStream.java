@@ -1,7 +1,7 @@
 package org.sanmarcux.clases;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  * @see <a href="http://stackoverflow.com/questions/1194656/appending-to-an-objectoutputstream/1195078#1195078">Appending
  * to an ObjectOutputStream</a>
  */

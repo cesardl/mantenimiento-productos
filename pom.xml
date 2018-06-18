@@ -77,7 +77,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.6</version>
                 <!-- The configuration of the plugin -->
                 <configuration>
                     <!-- Configuration of the archiver -->

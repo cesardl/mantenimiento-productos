@@ -1,7 +1,7 @@
 package org.sanmarcux.clases;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  */
 public class Producto implements java.io.Serializable {
 
