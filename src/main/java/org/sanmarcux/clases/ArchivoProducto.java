@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +17,8 @@ import java.util.Random;
 public final class ArchivoProducto {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArchivoProducto.class);
+
+    private static final String IO_ERROR_MESSAGE = "Error de E/S de Archivo: {}";
 
     private ArchivoProducto() {
     }
@@ -34,7 +39,7 @@ public final class ArchivoProducto {
             salida.writeObject(producto);
             LOG.info("Creando nuevo archivo, se registro el primer producto");
         } catch (IOException e) {
-            LOG.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, ruta, e);
         }
     }
 
@@ -53,11 +58,12 @@ public final class ArchivoProducto {
                     }
                 }
             } else {
-                boolean created = archivo.createNewFile();
+                Path directories = Files.createDirectories(Paths.get(archivo.getParent()));
+                boolean created = directories.toFile().createNewFile();
                 if (created) {
                     LOG.debug("Archivo creado en {}", archivo.getAbsolutePath());
                 } else {
-                    LOG.warn("Archivo no pudo ser creado");
+                    LOG.warn("Archivo no pudo ser creado en {}", archivo.getAbsolutePath());
                 }
             }
         } catch (EOFException e) {
@@ -67,7 +73,7 @@ public final class ArchivoProducto {
         } catch (ClassNotFoundException e) {
             LOG.error("Clase no encontrada", e);
         } catch (IOException e) {
-            LOG.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, ruta, e);
         }
     }
 
@@ -87,7 +93,7 @@ public final class ArchivoProducto {
         } catch (ClassNotFoundException e) {
             LOG.error("Clase no encontrada", e);
         } catch (IOException e) {
-            LOG.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, ruta, e);
         }
 
         return cantidad;
@@ -103,7 +109,7 @@ public final class ArchivoProducto {
             salida.flush();
             LOG.info("Producto agregado: {}", producto);
         } catch (IOException e) {
-            LOG.error("Error de E/S de Archivo: {}", ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, ruta, e);
         }
     }
 
@@ -111,7 +117,7 @@ public final class ArchivoProducto {
      * @param producto producto a modificar
      * @param ruta     ubicacion del fichero de datos
      */
-    public static void modificarRegistro(Producto producto, String ruta) {
+    public static boolean modificarRegistro(Producto producto, String ruta) {
         boolean band = false;
         List<Producto> v = new ArrayList<>();
         cargarRegistrosArray(v, ruta);
@@ -131,11 +137,12 @@ public final class ArchivoProducto {
                 }
                 LOG.info("Producto modificado: {}", producto);
             } catch (IOException ioe) {
-                LOG.error("Error de E/S de Archivo: {}", ruta, ioe);
+                LOG.error(IO_ERROR_MESSAGE, ruta, ioe);
             }
         } else {
             LOG.warn("No hay producto a modificar");
         }
+        return band;
     }
 
     /**
@@ -164,7 +171,7 @@ public final class ArchivoProducto {
                 }
                 LOG.info("Producto anulado: {}", codigo);
             } catch (IOException ioe) {
-                LOG.error("Error de E/S de Archivo: {}", ruta, ioe);
+                LOG.error(IO_ERROR_MESSAGE, ruta, ioe);
             }
         }
         return band;
@@ -175,7 +182,7 @@ public final class ArchivoProducto {
      * @param ruta   ubicacion del fichero de datos
      * @return registro consultado
      */
-    public static String consultarRegistro(final String codigo, String ruta) {
+    public static String consultarRegistro(final String codigo, final String ruta) {
         List<Producto> v = new ArrayList<>();
 
         cargarRegistrosArray(v, ruta);

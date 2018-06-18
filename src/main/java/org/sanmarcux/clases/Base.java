@@ -19,7 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  */
 public final class Base {
 

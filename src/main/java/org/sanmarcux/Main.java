@@ -2,11 +2,14 @@ package org.sanmarcux;
 
 import org.sanmarcux.mantenimiento.JFrameRegistro;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  */
 public class Main {
 
@@ -30,10 +33,19 @@ public class Main {
         }
 
         try {
-            Properties prop = new Properties();
-            prop.load(Main.class.getResourceAsStream("/app.properties"));
+            String appHome = System.getProperty("app.home");
 
-            final String path = System.getProperty("user.dir").concat(prop.getProperty("file.data"));
+            Properties prop = new Properties();
+            InputStream is;
+            if (appHome == null) {
+                is = Main.class.getResourceAsStream("/app.properties");
+                appHome = System.getProperty("user.dir").concat(File.separator);
+            } else {
+                is = new FileInputStream(appHome.concat("app.properties"));
+            }
+            prop.load(is);
+
+            final String path = appHome.concat(prop.getProperty("file.data"));
 
             javax.swing.SwingUtilities.invokeLater(() -> new JFrameRegistro(path).setVisible(true));
         } catch (IOException ex) {

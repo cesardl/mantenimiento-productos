@@ -18,11 +18,12 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
 
-    private static final int iNumColumna = 6;
+    private static final String FONT_NAME_TAHOMA = "Tahoma";
 
-    private static final String strTitulo[] = {
+    private static final String[] COLUMN_NAMES = {
             "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
     };
+
 
     private final String strRuta;
 
@@ -87,7 +88,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private void controlarEstadoPanelIngresoDeDatos(boolean b) {
-        Component components[] = jPanelRegistro.getComponents();
+        Component[] components = jPanelRegistro.getComponents();
         for (Component c : components) {
             if (c instanceof javax.swing.JFormattedTextField
                     || c instanceof javax.swing.JCheckBox) {
@@ -99,7 +100,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
     private void mostrarDatosDeRegistroTabla() {
         //Rediseniando la Tabla
         javax.swing.table.DefaultTableModel dtm = (javax.swing.table.DefaultTableModel) jTableDato.getModel();
-        dtm.setDataVector(getTableData(), strTitulo);
+        dtm.setDataVector(getTableData(), COLUMN_NAMES);
         jTableDato.setModel(dtm);
     }
 
@@ -108,7 +109,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         ArchivoProducto.cargarRegistrosArray(vProductos, strRuta);
         int size = vProductos.size();
-        Object[][] objData = new Object[size][iNumColumna];
+        Object[][] objData = new Object[size][6];
 
         for (int i = 0; i < size; i++) {
             Producto p = vProductos.get(i);
@@ -212,9 +213,9 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 jCheckBoxExonerado.isSelected(),
                 jCheckBoxVisible.isSelected());
 
-        ArchivoProducto.modificarRegistro(producto, strRuta);
+        boolean result = ArchivoProducto.modificarRegistro(producto, strRuta);
         jTextFieldCodigo.setText(producto.getCodigo());
-        return true;
+        return result;
     }
 
     private void postEditarRegistro() {
@@ -337,7 +338,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jTableDato = new javax.swing.JTable();
         javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
                 getTableData(),
-                strTitulo
+                COLUMN_NAMES
         ) {
             Class[] types = new Class[]{
                     java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
@@ -346,10 +347,12 @@ public final class JFrameRegistro extends javax.swing.JFrame
                     false, false, false, false, false, false
             };
 
+            @Override
             public Class getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
 
+            @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit[columnIndex];
             }
@@ -360,7 +363,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         setMinimumSize(new java.awt.Dimension(850, 320));
 
         jButtonNuevo.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonNuevo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonNuevo.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.gif")));
         jButtonNuevo.setMnemonic('N');
         jButtonNuevo.setToolTipText("Nuevo Registro");
@@ -373,7 +376,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonNuevo);
 
         jButtonConsultar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonConsultar.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonConsultar.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonConsultar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/consultar.gif")));
         jButtonConsultar.setMnemonic('C');
         jButtonConsultar.setToolTipText("Consultar Registro");
@@ -386,7 +389,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonConsultar);
 
         jButtonGrabar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonGrabar.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonGrabar.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonGrabar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/grabar.gif")));
         jButtonGrabar.setMnemonic('G');
         jButtonGrabar.setToolTipText("Grabar Registro");
@@ -400,7 +403,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonGrabar);
 
         jButtonEdit.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonEdit.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonEdit.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/edit.gif")));
         jButtonEdit.setMnemonic('E');
         jButtonEdit.setToolTipText("Editar Registro");
@@ -414,7 +417,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonEdit);
 
         jButtonAnular.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonAnular.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonAnular.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/anular.gif")));
         jButtonAnular.setMnemonic('A');
         jButtonAnular.setToolTipText("Anular Registro");
@@ -427,7 +430,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonAnular);
 
         jButtonInfo.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonInfo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonInfo.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/info.gif")));
         jButtonInfo.setMnemonic('H');
         jButtonInfo.setToolTipText("Ayuda");
@@ -440,7 +443,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jToolBarRegistro.add(jButtonInfo);
 
         jButtonSalir.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonSalir.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jButtonSalir.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jButtonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/salir.gif")));
         jButtonSalir.setMnemonic('S');
         jButtonSalir.setToolTipText("Salir de la Programa");
@@ -467,7 +470,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jLabelPrecio.setText("Precio:");
 
         jTextFieldCodigo.setEditable(false);
-        jTextFieldCodigo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11)); // NOI18N
+        jTextFieldCodigo.setFont(new java.awt.Font(FONT_NAME_TAHOMA, Font.BOLD, 11)); // NOI18N
         jTextFieldCodigo.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
         jFormattedTextFieldDescripcion.requestFocus();
@@ -636,21 +639,16 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     @Override
     public void keyPressed(java.awt.event.KeyEvent ke) {
-        if (ke.getSource() == jFormattedTextFieldDescripcion) {
-            if (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+        if (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            if (ke.getSource() == jFormattedTextFieldDescripcion) {
                 jFormattedTextFieldCantidad.requestFocus();
             }
-        }
-        if (ke.getSource() == jFormattedTextFieldCantidad) {
-            if (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            if (ke.getSource() == jFormattedTextFieldCantidad) {
                 jFormattedTextFieldPrecio.requestFocus();
             }
-        }
-        if (ke.getSource() == jFormattedTextFieldPrecio) {
-            if (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                if (jButtonGrabar.isEnabled()) {
-                    grabarRegistro();
-                }
+            if (ke.getSource() == jFormattedTextFieldPrecio &&
+                    jButtonGrabar.isEnabled()) {
+                grabarRegistro();
             }
         }
     }

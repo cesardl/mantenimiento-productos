@@ -58,7 +58,8 @@ public class ArchivoProductoTest {
     public void updatingProductTest() {
         Producto product = mock.getProducts().get(12);
 
-        ArchivoProducto.modificarRegistro(product, PATH);
+        boolean isUpdated = ArchivoProducto.modificarRegistro(product, PATH);
+        assertTrue(isUpdated);
 
         String result = ArchivoProducto.consultarRegistro(product.getCodigo(), PATH);
         assertFalse(result.isEmpty());
@@ -67,7 +68,8 @@ public class ArchivoProductoTest {
     @Test
     public void tryingToUpdateUnregisterProductTest() {
         Producto p = mock.getProducts().get(0);
-        ArchivoProducto.modificarRegistro(p, PATH);
+        boolean isUpdated = ArchivoProducto.modificarRegistro(p, PATH);
+        assertFalse(isUpdated);
 
         String result = ArchivoProducto.consultarRegistro(p.getCodigo(), PATH);
         assertTrue(result.isEmpty());
