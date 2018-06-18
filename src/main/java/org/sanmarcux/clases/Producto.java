@@ -1,4 +1,4 @@
-package clases;
+package org.sanmarcux.clases;
 
 /**
  * @author cesardiaz
@@ -30,17 +30,6 @@ public class Producto implements java.io.Serializable {
 
     public Producto(String codigo, String descripcion, int total, double precio,
                     boolean exonerado, boolean visible) {
-        this.codigo = codigo;
-        this.descripcion = descripcion;
-        this.total = total;
-        this.precio = precio;
-        this.exonerado = exonerado;
-        this.visible = visible;
-    }
-
-    public Producto(int id, String codigo, String descripcion, int total, double precio,
-                    boolean exonerado, boolean visible) {
-        this.id = id;
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.total = total;

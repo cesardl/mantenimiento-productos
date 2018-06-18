@@ -1,4 +1,4 @@
-package clases.etc;
+package org.sanmarcux.clases.etc;
 
 /**
  * @author cesardiaz

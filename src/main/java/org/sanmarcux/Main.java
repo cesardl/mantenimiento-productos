@@ -1,8 +1,7 @@
-package mantenimiento;
+package org.sanmarcux;
 
-import org.slf4j.LoggerFactory;
+import org.sanmarcux.mantenimiento.JFrameRegistro;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -11,16 +10,15 @@ import java.util.Properties;
  */
 public class Main {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Main.class);
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName()
-            );
+            javax.swing.UIManager.setLookAndFeel(
+                    javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
             log.error("Error with class", e);
         } catch (InstantiationException e) {

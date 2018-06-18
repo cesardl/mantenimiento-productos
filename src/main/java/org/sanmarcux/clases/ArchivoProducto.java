@@ -1,4 +1,4 @@
-package clases;
+package org.sanmarcux.clases;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * @author cesardiaz
+ * @author cesar.diaz
  */
 public final class ArchivoProducto {
 
@@ -32,6 +32,7 @@ public final class ArchivoProducto {
     public static void crearArchivo(Producto producto, String ruta) {
         try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
             salida.writeObject(producto);
+            LOG.info("Creando nuevo archivo, se registro el primer producto");
         } catch (IOException e) {
             LOG.error("Error de E/S de Archivo: {}", ruta, e);
         }
@@ -60,6 +61,8 @@ public final class ArchivoProducto {
                 }
             }
         } catch (EOFException e) {
+            LOG.debug("Se cargaron {} registros de productos", productos.size());
+
             LOG.error("Error de fin de Archivo: {}", ruta);
         } catch (ClassNotFoundException e) {
             LOG.error("Clase no encontrada", e);
@@ -110,7 +113,7 @@ public final class ArchivoProducto {
      */
     public static void modificarRegistro(Producto producto, String ruta) {
         boolean band = false;
-        ArrayList<Producto> v = new ArrayList<>();
+        List<Producto> v = new ArrayList<>();
         cargarRegistrosArray(v, ruta);
         for (int i = 0; i < v.size(); i++) {
             Producto p = v.get(i);
@@ -130,6 +133,8 @@ public final class ArchivoProducto {
             } catch (IOException ioe) {
                 LOG.error("Error de E/S de Archivo: {}", ruta, ioe);
             }
+        } else {
+            LOG.warn("No hay producto a modificar");
         }
     }
 
@@ -140,7 +145,7 @@ public final class ArchivoProducto {
      */
     public static boolean anularRegistro(String codigo, String ruta) {
         boolean band = false;
-        ArrayList<Producto> v = new ArrayList<>();
+        List<Producto> v = new ArrayList<>();
         cargarRegistrosArray(v, ruta);
         for (int i = 0; i < v.size(); i++) {
             Producto p = v.get(i);
@@ -171,7 +176,7 @@ public final class ArchivoProducto {
      * @return registro consultado
      */
     public static String consultarRegistro(final String codigo, String ruta) {
-        ArrayList<Producto> v = new ArrayList<>();
+        List<Producto> v = new ArrayList<>();
 
         cargarRegistrosArray(v, ruta);
 

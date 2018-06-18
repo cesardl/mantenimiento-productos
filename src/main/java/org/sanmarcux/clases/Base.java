@@ -1,6 +1,6 @@
-package clases;
+package org.sanmarcux.clases;
 
-import clases.etc.NumberType;
+import org.sanmarcux.clases.etc.NumberType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public final class Base {
     }
 
     /**
-     * @return
+     * @return dato ingresado por teclado
      */
     public static String leerDato() {
         String dato = "inicio";
@@ -61,7 +61,7 @@ public final class Base {
         try {
             dato = Integer.parseInt(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - {} - a Entero.", cadena, nfe);
+            LOG.error("Error al convertir - {} - a Entero.", cadena);
         }
         return dato;
     }
@@ -75,7 +75,7 @@ public final class Base {
         try {
             dato = Double.parseDouble(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - {} - a Real.", cadena, nfe);
+            LOG.error("Error al convertir - {} - a Real.", cadena);
         }
         return dato;
     }
@@ -89,7 +89,7 @@ public final class Base {
         try {
             dato = Long.parseLong(cadena);
         } catch (NumberFormatException nfe) {
-            LOG.error("Error al convertir - {} - a Entero largo.", cadena, nfe);
+            LOG.error("Error al convertir - {} - a Entero largo.", cadena);
         }
         return dato;
     }
@@ -182,7 +182,7 @@ public final class Base {
     public static String getFecha() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
-        dato = dato + "/" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
+        dato = dato + "/" + completarIzquierda("" + (calendario.get(GregorianCalendar.MONTH) + 1), 2, "0");
         dato = dato + "/" + completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
         return dato;
     }
@@ -200,7 +200,7 @@ public final class Base {
      */
     public static String getMes() {
         GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + ((calendario.get(GregorianCalendar.MONTH)) + 1), 2, "0");
+        return completarIzquierda("" + calendario.get(GregorianCalendar.MONTH + 1), 2, "0");
     }
 
     /**
@@ -217,7 +217,7 @@ public final class Base {
     public static String getHoraMinSeg() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
         dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
         return dato;
     }
@@ -228,7 +228,7 @@ public final class Base {
     public static String getHoraMin() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
         return dato;
     }
 
@@ -238,7 +238,7 @@ public final class Base {
     public static String getHoraMinSegAmPm() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
         dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
         if (calendario.get(GregorianCalendar.AM_PM) == 0) {
             dato = dato + " AM";
@@ -254,7 +254,7 @@ public final class Base {
     public static String getHoraMinAmPm() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
         if (calendario.get(GregorianCalendar.AM_PM) == 0) {
             dato = dato + " AM";
         } else {
@@ -269,7 +269,7 @@ public final class Base {
     public static String getHoraMinSegAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
         dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
         if (calendario.get(GregorianCalendar.AM_PM) == 0) {
             dato = dato + " A.M.";
@@ -285,7 +285,7 @@ public final class Base {
     public static String getHoraMinAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
         if (calendario.get(GregorianCalendar.AM_PM) == 0) {
             dato = dato + " A.M.";
         } else {
@@ -307,7 +307,7 @@ public final class Base {
      */
     public static String getMinuto() {
         GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + ((calendario.get(GregorianCalendar.MINUTE))), 2, "0");
+        return completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
     }
 
     /**
@@ -326,7 +326,7 @@ public final class Base {
         int posicion;
         try {
             dato = java.net.InetAddress.getLocalHost().toString();
-            posicion = dato.indexOf("/");
+            posicion = dato.indexOf('/');
             if (posicion >= 0) {
                 dato = dato.substring(posicion + 1);
             }
@@ -345,7 +345,7 @@ public final class Base {
         int posicion;
         try {
             dato = java.net.InetAddress.getLocalHost().toString();
-            posicion = dato.indexOf("/");
+            posicion = dato.indexOf('/');
             if (posicion >= 0) {
                 dato = dato.substring(0, posicion);
             }
@@ -461,13 +461,13 @@ public final class Base {
     public static void centrarVentana(JFrame jfrmVentana) {
         try {
             Dimension tamPantalla = Toolkit.getDefaultToolkit().getScreenSize();
-            int x, y, width, height;
-            x = ((int) tamPantalla.getWidth());
-            y = ((int) tamPantalla.getHeight());
+
+            int x = (int) tamPantalla.getWidth();
+            int y = (int) tamPantalla.getHeight();
             LOG.debug("Tamanho de pantalla ({}, {})", x, y);
 
-            width = ((int) jfrmVentana.getSize().getWidth());
-            height = ((int) jfrmVentana.getSize().getHeight());
+            int width = (int) jfrmVentana.getSize().getWidth();
+            int height = (int) jfrmVentana.getSize().getHeight();
             LOG.debug("Dimensión de la aplicacion ({}, {})", width, height);
 
             x = (x / 2) - (width / 2);

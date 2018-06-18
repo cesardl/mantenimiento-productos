@@ -1,11 +1,10 @@
-package mantenimiento;
+package org.sanmarcux.mantenimiento;
 
-import clases.ArchivoProducto;
-import clases.Base;
-import clases.Producto;
-import clases.etc.ActionType;
-import clases.etc.NumberType;
-import org.slf4j.LoggerFactory;
+import org.sanmarcux.clases.ArchivoProducto;
+import org.sanmarcux.clases.Base;
+import org.sanmarcux.clases.Producto;
+import org.sanmarcux.clases.etc.ActionType;
+import org.sanmarcux.clases.etc.NumberType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,11 +16,7 @@ import java.util.ArrayList;
 public final class JFrameRegistro extends javax.swing.JFrame
         implements java.awt.event.ActionListener, java.awt.event.KeyListener {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(JFrameRegistro.class);
-
-    private enum EstadoBotonesAccion {
-        NUEVO, EDITAR
-    }
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
 
     private static final int iNumColumna = 6;
 
@@ -50,7 +45,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
     private javax.swing.JTable jTableDato;
     private javax.swing.JTextField jTextFieldCodigo;
 
-    public JFrameRegistro(String strRuta) {
+    public JFrameRegistro(final String strRuta) {
         this.strRuta = strRuta;
 
         initComponents();
@@ -67,9 +62,9 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jCheckBoxVisible.setSelected(true);
     }
 
-    private void controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion opcion) {
+    private void controlarEstadoBotonesBarraHerramienta(ActionType opcion) {
         switch (opcion) {
-            case NUEVO:
+            case NEW:
                 jButtonGrabar.setEnabled(true);
 
                 jButtonConsultar.setEnabled(false);
@@ -79,7 +74,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 jButtonSalir.setEnabled(false);
                 break;
 
-            case EDITAR:
+            case EDIT:
                 jButtonGrabar.setEnabled(false);
 
                 jButtonConsultar.setEnabled(true);
@@ -131,7 +126,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         currentAction = ActionType.NEW;
 
         limpiarRegistro();
-        controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.NUEVO);
+        controlarEstadoBotonesBarraHerramienta(ActionType.NEW);
         controlarEstadoPanelIngresoDeDatos(true);
         jFormattedTextFieldDescripcion.requestFocus();
     }
@@ -202,7 +197,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void postGrabarRegistro() {
         mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.EDITAR);
+        controlarEstadoBotonesBarraHerramienta(ActionType.EDIT);
         controlarEstadoPanelIngresoDeDatos(false);
         Base.mensaje("Se grabo el registro satisfactoriamente.",
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
@@ -224,7 +219,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void postEditarRegistro() {
         mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.EDITAR);
+        controlarEstadoBotonesBarraHerramienta(ActionType.EDIT);
         controlarEstadoPanelIngresoDeDatos(false);
         limpiarRegistro();
         Base.mensaje("Se actualizo el registro satisfactoriamente.",
@@ -261,7 +256,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
             } else {
                 Producto prod = vProductos.get(selectedRow);
 
-                controlarEstadoBotonesBarraHerramienta(EstadoBotonesAccion.NUEVO);
+                controlarEstadoBotonesBarraHerramienta(ActionType.NEW);
                 controlarEstadoPanelIngresoDeDatos(true);
 
                 String[] price = String.valueOf(prod.getPrecio()).split("\\.");
