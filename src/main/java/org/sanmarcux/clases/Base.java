@@ -1,22 +1,14 @@
 package org.sanmarcux.clases;
 
-import org.sanmarcux.clases.etc.NumberType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
 /**
  * @author cesar.diaz
@@ -29,25 +21,12 @@ public final class Base {
     }
 
     /**
-     * @return dato ingresado por teclado
-     */
-    public static String leerDato() {
-        String dato = "inicio";
-        try (BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in))) {
-            dato = teclado.readLine();
-        } catch (IOException e) {
-            LOG.error("Error de Lectura de datos.", e);
-        }
-        return dato;
-    }
-
-    /**
      * @param numero numero a formatear
      * @return el numero formateado
      */
     public static String formatearNumeroYDigitos(double numero) {
         String pattern = "#0.00";
-        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH);
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(java.util.Locale.ENGLISH);
 
         return new DecimalFormat(pattern, symbols).format(numero);
     }
@@ -190,98 +169,6 @@ public final class Base {
     /**
      * @return
      */
-    public static String getDia() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + calendario.get(GregorianCalendar.DAY_OF_MONTH), 2, "0");
-    }
-
-    /**
-     * @return
-     */
-    public static String getMes() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + calendario.get(GregorianCalendar.MONTH + 1), 2, "0");
-    }
-
-    /**
-     * @return
-     */
-    public static String getAnio() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + calendario.get(GregorianCalendar.YEAR), 4, "0");
-    }
-
-    /**
-     * @return
-     */
-    public static String getHoraMinSeg() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
-        return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getHoraMin() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
-        return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getHoraMinSegAmPm() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
-        if (calendario.get(GregorianCalendar.AM_PM) == 0) {
-            dato = dato + " AM";
-        } else {
-            dato = dato + " PM";
-        }
-        return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getHoraMinAmPm() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
-        if (calendario.get(GregorianCalendar.AM_PM) == 0) {
-            dato = dato + " AM";
-        } else {
-            dato = dato + " PM";
-        }
-        return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getHoraMinSegAmPm2() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
-        dato = dato + ":" + completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
-        if (calendario.get(GregorianCalendar.AM_PM) == 0) {
-            dato = dato + " A.M.";
-        } else {
-            dato = dato + " P.M.";
-        }
-        return dato;
-    }
-
-    /**
-     * @return
-     */
     public static String getHoraMinAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
         String dato = completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
@@ -292,30 +179,6 @@ public final class Base {
             dato = dato + " P.M.";
         }
         return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getHora() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + calendario.get(GregorianCalendar.HOUR), 2, "0");
-    }
-
-    /**
-     * @return
-     */
-    public static String getMinuto() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + calendario.get(GregorianCalendar.MINUTE), 2, "0");
-    }
-
-    /**
-     * @return
-     */
-    public static String getSegundo() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        return completarIzquierda("" + calendario.get(GregorianCalendar.SECOND), 2, "0");
     }
 
     /**
@@ -330,7 +193,7 @@ public final class Base {
             if (posicion >= 0) {
                 dato = dato.substring(posicion + 1);
             }
-        } catch (UnknownHostException uhe) {
+        } catch (java.net.UnknownHostException uhe) {
             LOG.error(uhe.getMessage(), uhe);
             dato = "No se encontro LocalHost: " + uhe.toString() + " " + uhe.getMessage();
         }
@@ -349,100 +212,10 @@ public final class Base {
             if (posicion >= 0) {
                 dato = dato.substring(0, posicion);
             }
-        } catch (UnknownHostException uhe) {
+        } catch (java.net.UnknownHostException uhe) {
             LOG.error(uhe.getMessage(), uhe);
             dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
-        return dato;
-    }
-
-    /**
-     * @param mes
-     * @return
-     */
-    public static String getMesEnLetra(int mes) {
-        String dato = "";
-        switch (mes) {
-            case 1:
-                dato = "Enero";
-                break;
-            case 2:
-                dato = "Febrero";
-                break;
-            case 3:
-                dato = "Marzo";
-                break;
-            case 4:
-                dato = "Abril";
-                break;
-            case 5:
-                dato = "Mayo";
-                break;
-            case 6:
-                dato = "Junio";
-                break;
-            case 7:
-                dato = "Julio";
-                break;
-            case 8:
-                dato = "Agosto";
-                break;
-            case 9:
-                dato = "Setiembre";
-                break;
-            case 10:
-                dato = "Octubre";
-                break;
-            case 11:
-                dato = "Noviembre";
-                break;
-            case 12:
-                dato = "Diciembre";
-                break;
-        }
-        return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getDiaEnLetra() {
-        GregorianCalendar calendario = new GregorianCalendar();
-        int dia = calendario.get(GregorianCalendar.DAY_OF_WEEK);
-        String dato = "";
-
-        switch (dia) {
-            case 1:
-                dato = "Domingo";
-                break;
-            case 2:
-                dato = "Lunes";
-                break;
-            case 3:
-                dato = "Martes";
-                break;
-            case 4:
-                dato = "Miercoles";
-                break;
-            case 5:
-                dato = "Jueves";
-                break;
-            case 6:
-                dato = "Viernes";
-                break;
-            case 7:
-                dato = "Sabado";
-                break;
-        }
-        return dato;
-    }
-
-    /**
-     * @return
-     */
-    public static String getFechaEnLetra() {
-        String dato;
-        dato = getDia() + " de " + getMesEnLetra(convertirCadenaEntero(getMes())) + " del " + getAnio();
         return dato;
     }
 
@@ -452,40 +225,35 @@ public final class Base {
      * @param iTipoIcono tipo de mensaje
      */
     public static void mensaje(String strMensaje, String strTitulo, int iTipoIcono) {
-        JOptionPane.showMessageDialog(null, strMensaje, strTitulo, iTipoIcono);
+        javax.swing.JOptionPane.showMessageDialog(null, strMensaje, strTitulo, iTipoIcono);
     }
 
     /**
      * @param jfrmVentana ventana a centrar
      */
-    public static void centrarVentana(JFrame jfrmVentana) {
-        try {
-            Dimension tamPantalla = Toolkit.getDefaultToolkit().getScreenSize();
+    public static void centrarVentana(javax.swing.JFrame jfrmVentana) {
+        java.awt.Dimension tamPantalla = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
-            int x = (int) tamPantalla.getWidth();
-            int y = (int) tamPantalla.getHeight();
-            LOG.debug("Tamanho de pantalla ({}, {})", x, y);
+        int x = (int) tamPantalla.getWidth();
+        int y = (int) tamPantalla.getHeight();
+        LOG.debug("Tamanho de pantalla ({}, {})", x, y);
 
-            int width = (int) jfrmVentana.getSize().getWidth();
-            int height = (int) jfrmVentana.getSize().getHeight();
-            LOG.debug("Dimensión de la aplicacion ({}, {})", width, height);
+        int width = (int) jfrmVentana.getSize().getWidth();
+        int height = (int) jfrmVentana.getSize().getHeight();
+        LOG.debug("Dimensión de la aplicacion ({}, {})", width, height);
 
-            x = (x / 2) - (width / 2);
-            y = (y / 2) - (height / 2);
-            jfrmVentana.setBounds(x, y, width, height);
-        } catch (HeadlessException he) {
-            LOG.error(he.getMessage(), he);
-        }
+        x = (x / 2) - (width / 2);
+        y = (y / 2) - (height / 2);
+        jfrmVentana.setBounds(x, y, width, height);
     }
 
     /**
-     * @param tipo
-     * @param cantEnt
-     * @param cantFra
-     * @param caracter
-     * @return
+     * @param cantEnt  parte entera
+     * @param cantFra  parte decimal
+     * @param caracter caracter a completar la base
+     * @return formateador
      */
-    public static DefaultFormatterFactory creaFormatoControl(NumberType tipo, int cantEnt, int cantFra, char caracter) {
+    public static DefaultFormatterFactory creaFormatoControl(int cantEnt, int cantFra, char caracter) {
         DefaultFormatterFactory factory = null;
         StringBuilder formato = new StringBuilder();
         int i;
@@ -499,20 +267,15 @@ public final class Base {
                 formato.append("#");
             }
         }
-        MaskFormatter numcase;
-        switch (tipo) {
-            case ENTERO:
-            case REAL:
-                try {
-                    numcase = new MaskFormatter(formato.toString());
-                    numcase.setPlaceholderCharacter(caracter);
-                    numcase.setOverwriteMode(true);
-                    numcase.setValidCharacters("0123456789");
-                    factory = new DefaultFormatterFactory(numcase);
-                } catch (ParseException pe) {
-                    LOG.error("Error al dar Formato de Numero Real", pe);
-                }
-                break;
+
+        try {
+            MaskFormatter numcase = new MaskFormatter(formato.toString());
+            numcase.setPlaceholderCharacter(caracter);
+            numcase.setOverwriteMode(true);
+            numcase.setValidCharacters("0123456789");
+            factory = new DefaultFormatterFactory(numcase);
+        } catch (ParseException pe) {
+            LOG.error("Error al dar Formato de Numero Real", pe);
         }
         return factory;
     }

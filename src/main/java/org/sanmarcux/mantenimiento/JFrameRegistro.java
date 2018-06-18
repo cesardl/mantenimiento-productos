@@ -4,7 +4,6 @@ import org.sanmarcux.clases.ArchivoProducto;
 import org.sanmarcux.clases.Base;
 import org.sanmarcux.clases.Producto;
 import org.sanmarcux.clases.etc.ActionType;
-import org.sanmarcux.clases.etc.NumberType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,14 +15,14 @@ import java.util.ArrayList;
 public final class JFrameRegistro extends javax.swing.JFrame
         implements java.awt.event.ActionListener, java.awt.event.KeyListener {
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
 
     private static final String FONT_NAME_TAHOMA = "Tahoma";
+    private static final String PRODUCTS_NOT_FOUND_MESSAGE = "No existen productos";
 
     private static final String[] COLUMN_NAMES = {
             "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
     };
-
 
     private final String strRuta;
 
@@ -64,26 +63,23 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private void controlarEstadoBotonesBarraHerramienta(ActionType opcion) {
-        switch (opcion) {
-            case NEW:
-                jButtonGrabar.setEnabled(true);
+        if (opcion == ActionType.NEW) {
+            jButtonGrabar.setEnabled(true);
 
-                jButtonConsultar.setEnabled(false);
-                jButtonEdit.setEnabled(false);
-                jButtonAnular.setEnabled(false);
-                jButtonInfo.setEnabled(false);
-                jButtonSalir.setEnabled(false);
-                break;
+            jButtonConsultar.setEnabled(false);
+            jButtonEdit.setEnabled(false);
+            jButtonAnular.setEnabled(false);
+            jButtonInfo.setEnabled(false);
+            jButtonSalir.setEnabled(false);
 
-            case EDIT:
-                jButtonGrabar.setEnabled(false);
+        } else if (opcion == ActionType.EDIT) {
+            jButtonGrabar.setEnabled(false);
 
-                jButtonConsultar.setEnabled(true);
-                jButtonEdit.setEnabled(true);
-                jButtonAnular.setEnabled(true);
-                jButtonInfo.setEnabled(true);
-                jButtonSalir.setEnabled(true);
-                break;
+            jButtonConsultar.setEnabled(true);
+            jButtonEdit.setEnabled(true);
+            jButtonAnular.setEnabled(true);
+            jButtonInfo.setEnabled(true);
+            jButtonSalir.setEnabled(true);
         }
     }
 
@@ -109,18 +105,18 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         ArchivoProducto.cargarRegistrosArray(vProductos, strRuta);
         int size = vProductos.size();
-        Object[][] objData = new Object[size][6];
+        Object[][] data = new Object[size][6];
 
         for (int i = 0; i < size; i++) {
             Producto p = vProductos.get(i);
-            objData[i][0] = p.getCodigo();
-            objData[i][1] = p.getDescripcion();
-            objData[i][2] = p.getTotal();
-            objData[i][3] = Base.formatearNumeroYDigitos(p.getPrecio());
-            objData[i][4] = p.isExonerado();
-            objData[i][5] = p.isVisible();
+            data[i][0] = p.getCodigo();
+            data[i][1] = p.getDescripcion();
+            data[i][2] = p.getTotal();
+            data[i][3] = Base.formatearNumeroYDigitos(p.getPrecio());
+            data[i][4] = p.isExonerado();
+            data[i][5] = p.isVisible();
         }
-        return objData;
+        return data;
     }
 
     private void nuevoRegistro() {
@@ -134,7 +130,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void consultarRegistro() {
         if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
-            Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
+            Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             String strCod = JOptionPane.showInputDialog(this,
                     "Ingrese codigo del producto:", getTitle(), JOptionPane.PLAIN_MESSAGE);
@@ -165,17 +161,21 @@ public final class JFrameRegistro extends javax.swing.JFrame
             case 2:
                 Base.mensaje("Ingrese correctamente la Descripcion.", getTitle(), JOptionPane.ERROR_MESSAGE);
                 jFormattedTextFieldDescripcion.requestFocus();
-                break;
+                return false;
+
             case 3:
                 Base.mensaje("Ingrese correctamente la Cantidad.", getTitle(), JOptionPane.ERROR_MESSAGE);
                 jFormattedTextFieldCantidad.requestFocus();
-                break;
+                return false;
+
             case 4:
                 Base.mensaje("Ingrese correctamente el Precio.", getTitle(), JOptionPane.ERROR_MESSAGE);
                 jFormattedTextFieldPrecio.requestFocus();
-                break;
+                return false;
+
+            default:
+                return true;
         }
-        return iValor == 0;
     }
 
     private boolean grabarRegistroArchivo() {
@@ -229,25 +229,23 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void grabarRegistro() {
         if (validarFormulario()) {
-            switch (currentAction) {
-                case NEW:
-                    if (grabarRegistroArchivo()) {
-                        postGrabarRegistro();
-                    }
-                    break;
+            if (currentAction == ActionType.NEW) {
+                if (grabarRegistroArchivo()) {
+                    postGrabarRegistro();
+                }
 
-                case EDIT:
-                    if (editarRegistroArchivo()) {
-                        postEditarRegistro();
-                    }
-                    break;
+            } else if (currentAction == ActionType.EDIT) {
+                if (editarRegistroArchivo()) {
+                    postEditarRegistro();
+                }
+
             }
         }
     }
 
     private void editarRegistro() {
         if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
-            Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
+            Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             currentAction = ActionType.EDIT;
 
@@ -278,7 +276,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void anularRegistro() {
         if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
-            Base.mensaje("No existen productos", getTitle(), JOptionPane.WARNING_MESSAGE);
+            Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             int selectedRow = jTableDato.getSelectedRow();
             if (selectedRow == -1) {
@@ -299,7 +297,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void info() {
         String mensaje = String.format("%s@%s\n%s %s", Base.getNombreMaquina(), Base.getDireccionIp(), Base.getFecha(), Base.getHoraMinAmPm2());
-        log.debug(mensaje);
+        LOG.debug(mensaje);
         Base.mensaje(mensaje, getTitle(), JOptionPane.PLAIN_MESSAGE);
     }
 
@@ -477,11 +475,11 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jFormattedTextFieldDescripcion.addKeyListener(this);
 
         jFormattedTextFieldCantidad.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(NumberType.ENTERO, 5, 0, '0'));
+        jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(5, 0, '0'));
         jFormattedTextFieldCantidad.addKeyListener(this);
 
         jFormattedTextFieldPrecio.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(NumberType.REAL, 2, 2, '0'));
+        jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(2, 2, '0'));
         jFormattedTextFieldPrecio.addKeyListener(this);
 
         jCheckBoxExonerado.setBackground(new java.awt.Color(255, 255, 255));
@@ -639,6 +637,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     @Override
     public void keyPressed(java.awt.event.KeyEvent ke) {
+        LOG.trace(ke.paramString());
         if (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             if (ke.getSource() == jFormattedTextFieldDescripcion) {
                 jFormattedTextFieldCantidad.requestFocus();
@@ -655,10 +654,12 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     @Override
     public void keyTyped(java.awt.event.KeyEvent ke) {
+        LOG.trace(ke.paramString());
     }
 
     @Override
     public void keyReleased(java.awt.event.KeyEvent ke) {
+        LOG.trace(ke.paramString());
     }
     // End of variables declaration//GEN-END:variables
 }
