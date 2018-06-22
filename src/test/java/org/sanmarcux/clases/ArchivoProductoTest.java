@@ -19,7 +19,7 @@ public class ArchivoProductoTest {
 
     private static final String PATH = "target/product.dat";
 
-    private ProductMock mock = ProductMock.getInstance();
+    private final ProductMock mock = ProductMock.getInstance();
 
     @Before
     public void setUp() throws IOException {

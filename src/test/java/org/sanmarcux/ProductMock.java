@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class ProductMock {
 
-    private static ProductMock ourInstance = new ProductMock();
+    private static final ProductMock OUR_INSTANCE = new ProductMock();
 
     public static ProductMock getInstance() {
-        return ourInstance;
+        return OUR_INSTANCE;
     }
 
-    private List<Producto> vProducts;
+    private final List<Producto> vProducts;
 
     private ProductMock() {
         vProducts = new ArrayList<>();

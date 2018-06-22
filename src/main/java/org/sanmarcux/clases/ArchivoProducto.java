@@ -67,7 +67,7 @@ public final class ArchivoProducto {
                 }
             }
         } catch (EOFException e) {
-            LOG.debug("Se cargaron {} registros de productos", productos.size());
+            LOG.info("Se cargaron {} registros de productos", productos.size());
 
             LOG.error("Error de fin de Archivo: {}", ruta);
         } catch (ClassNotFoundException e) {
@@ -107,7 +107,7 @@ public final class ArchivoProducto {
         try (AppendingObjectOutputStream salida = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
             salida.writeUnshared(producto);
             salida.flush();
-            LOG.info("Producto agregado: {}", producto);
+            LOG.info("Producto agregado: {}", producto.getCodigo());
         } catch (IOException e) {
             LOG.error(IO_ERROR_MESSAGE, ruta, e);
         }
@@ -135,7 +135,7 @@ public final class ArchivoProducto {
                 for (Producto p : v) {
                     salida.writeObject(p);
                 }
-                LOG.info("Producto modificado: {}", producto);
+                LOG.info("Producto modificado: {}", producto.getCodigo());
             } catch (IOException ioe) {
                 LOG.error(IO_ERROR_MESSAGE, ruta, ioe);
             }
