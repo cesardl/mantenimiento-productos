@@ -13,10 +13,12 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
 
+    // private static final java.util.ResourceBundle APPLICATION_RESOURCES = java.util.ResourceBundle.getBundle("view/Bundle");
+
     private static final String PRODUCTS_NOT_FOUND_MESSAGE = "No existen productos";
 
     private static final String[] COLUMN_NAMES = {
-            "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
+        "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
     };
 
     private enum ActionType {
@@ -39,33 +41,33 @@ public final class JFrameRegistro extends javax.swing.JFrame {
     }
 
     private void limpiarRegistro() {
-        jTextFieldCodigo.setText("");
-        jFormattedTextFieldDescripcion.setText("");
-        jFormattedTextFieldCantidad.setText("0");
-        jFormattedTextFieldPrecio.setText("0");
-        jCheckBoxExonerado.setSelected(true);
+        jTextFieldCode.setText("");
+        jTextFieldDescription.setText("");
+        jFormattedTextFieldQuantity.setText("0");
+        jFormattedTextFieldPrice.setText("0");
+        jCheckBoxExonerated.setSelected(true);
         jCheckBoxVisible.setSelected(true);
     }
 
     private void controlarEstadoBotonesBarraHerramienta(final boolean b) {
-        jButtonGrabar.setEnabled(b);
+        jButtonSave.setEnabled(b);
 
         if (b) {
-            jButtonNuevo.setEnabled(false);
-            jButtonConsultar.setEnabled(false);
+            jButtonNew.setEnabled(false);
+            jButtonRead.setEnabled(false);
             jButtonEdit.setEnabled(false);
-            jButtonAnular.setEnabled(false);
+            jButtonDelete.setEnabled(false);
 
         } else {
-            jButtonNuevo.setEnabled(true);
-            jButtonConsultar.setEnabled(true);
+            jButtonNew.setEnabled(true);
+            jButtonRead.setEnabled(true);
             jButtonEdit.setEnabled(true);
-            jButtonAnular.setEnabled(true);
+            jButtonDelete.setEnabled(true);
         }
     }
 
     private void controlarEstadoPanelIngresoDeDatos(boolean b) {
-        java.awt.Component[] components = jPanelRegistro.getComponents();
+        java.awt.Component[] components = jPanelRecord.getComponents();
         for (java.awt.Component c : components) {
             if (c instanceof javax.swing.JFormattedTextField
                     || c instanceof javax.swing.JCheckBox) {
@@ -76,9 +78,9 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private void mostrarDatosDeRegistroTabla() {
         //Rediseniando la Tabla
-        javax.swing.table.DefaultTableModel dtm = (javax.swing.table.DefaultTableModel) jTableDato.getModel();
+        javax.swing.table.DefaultTableModel dtm = (javax.swing.table.DefaultTableModel) jTableData.getModel();
         dtm.setDataVector(getTableData(), COLUMN_NAMES);
-        jTableDato.setModel(dtm);
+        jTableData.setModel(dtm);
     }
 
     private Object[][] getTableData() {
@@ -106,7 +108,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         limpiarRegistro();
         controlarEstadoBotonesBarraHerramienta(true);
         controlarEstadoPanelIngresoDeDatos(true);
-        jFormattedTextFieldDescripcion.requestFocus();
+        jTextFieldDescription.requestFocus();
     }
 
     private void consultarRegistro() {
@@ -130,28 +132,28 @@ public final class JFrameRegistro extends javax.swing.JFrame {
     private boolean validarFormulario() {
         int iValor = 0;
 
-        if (jFormattedTextFieldDescripcion.getText().isEmpty()) {
+        if (jTextFieldDescription.getText().isEmpty()) {
             iValor = 2;
-        } else if (Base.convertirCadenaReal(jFormattedTextFieldCantidad.getText().trim()) == 0) {
+        } else if (Base.convertirCadenaReal(jFormattedTextFieldQuantity.getText().trim()) == 0) {
             iValor = 3;
-        } else if (Base.convertirCadenaReal(jFormattedTextFieldPrecio.getText().trim()) == 0) {
+        } else if (Base.convertirCadenaReal(jFormattedTextFieldPrice.getText().trim()) == 0) {
             iValor = 4;
         }
 
         switch (iValor) {
             case 2:
                 Base.mensaje("Ingrese correctamente la Descripcion.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jFormattedTextFieldDescripcion.requestFocus();
+                jTextFieldDescription.requestFocus();
                 return false;
 
             case 3:
                 Base.mensaje("Ingrese correctamente la Cantidad.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jFormattedTextFieldCantidad.requestFocus();
+                jFormattedTextFieldQuantity.requestFocus();
                 return false;
 
             case 4:
                 Base.mensaje("Ingrese correctamente el Precio.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jFormattedTextFieldPrecio.requestFocus();
+                jFormattedTextFieldPrice.requestFocus();
                 return false;
 
             default:
@@ -162,10 +164,10 @@ public final class JFrameRegistro extends javax.swing.JFrame {
     private boolean grabarRegistroArchivo() {
         Producto producto = new Producto(
                 ArchivoProducto.obtenerNumeroSecuencia(),
-                jFormattedTextFieldDescripcion.getText().trim(),
-                Base.convertirCadenaEntero(jFormattedTextFieldCantidad.getText().trim()),
-                Base.convertirCadenaReal(jFormattedTextFieldPrecio.getText().trim()),
-                jCheckBoxExonerado.isSelected(),
+                jTextFieldDescription.getText().trim(),
+                Base.convertirCadenaEntero(jFormattedTextFieldQuantity.getText().trim()),
+                Base.convertirCadenaReal(jFormattedTextFieldPrice.getText().trim()),
+                jCheckBoxExonerated.isSelected(),
                 jCheckBoxVisible.isSelected());
 
         boolean result;
@@ -174,7 +176,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         } else {
             result = ArchivoProducto.adicionarRegistro(producto, path);
         }
-        jTextFieldCodigo.setText(producto.getCodigo());
+        jTextFieldCode.setText(producto.getCodigo());
         return result;
     }
 
@@ -189,15 +191,15 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private boolean editarRegistroArchivo() {
         Producto producto = new Producto(
-                jTextFieldCodigo.getText(),
-                jFormattedTextFieldDescripcion.getText().trim(),
-                Base.convertirCadenaEntero(jFormattedTextFieldCantidad.getText().trim()),
-                Base.convertirCadenaReal(jFormattedTextFieldPrecio.getText().trim()),
-                jCheckBoxExonerado.isSelected(),
+                jTextFieldCode.getText(),
+                jTextFieldDescription.getText().trim(),
+                Base.convertirCadenaEntero(jFormattedTextFieldQuantity.getText().trim()),
+                Base.convertirCadenaReal(jFormattedTextFieldPrice.getText().trim()),
+                jCheckBoxExonerated.isSelected(),
                 jCheckBoxVisible.isSelected());
 
         boolean result = ArchivoProducto.modificarRegistro(producto, path);
-        jTextFieldCodigo.setText(producto.getCodigo());
+        jTextFieldCode.setText(producto.getCodigo());
         return result;
     }
 
@@ -229,7 +231,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         } else {
             currentAction = ActionType.EDIT;
 
-            int selectedRow = jTableDato.getSelectedRow();
+            int selectedRow = jTableData.getSelectedRow();
             if (selectedRow == -1) {
                 Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
             } else {
@@ -242,14 +244,14 @@ public final class JFrameRegistro extends javax.swing.JFrame {
                 String real = Base.completarIzquierda(price[0], 2, "0");
                 String decimal = Base.completarDerecha(price[1], 2, "0");
 
-                jTextFieldCodigo.setText(prod.getCodigo());
-                jFormattedTextFieldDescripcion.setText(prod.getDescripcion());
-                jFormattedTextFieldCantidad.setText(Base.completarIzquierda(String.valueOf(prod.getTotal()), 5, "0"));
-                jFormattedTextFieldPrecio.setText(real.concat(".").concat(decimal));
-                jCheckBoxExonerado.setSelected(prod.isExonerado());
+                jTextFieldCode.setText(prod.getCodigo());
+                jTextFieldDescription.setText(prod.getDescripcion());
+                jFormattedTextFieldQuantity.setText(Base.completarIzquierda(String.valueOf(prod.getTotal()), 5, "0"));
+                jFormattedTextFieldPrice.setText(real.concat(".").concat(decimal));
+                jCheckBoxExonerated.setSelected(prod.isExonerado());
                 jCheckBoxVisible.setSelected(prod.isVisible());
 
-                jFormattedTextFieldDescripcion.requestFocus();
+                jTextFieldDescription.requestFocus();
             }
         }
     }
@@ -258,15 +260,15 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         if (ArchivoProducto.cantidadRegistros(path) == 0) {
             Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
-            int selectedRow = jTableDato.getSelectedRow();
+            int selectedRow = jTableData.getSelectedRow();
             if (selectedRow == -1) {
                 Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
             } else {
                 if (JOptionPane.showConfirmDialog(this, "Seguro que desea eliminar este producto?",
                         getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
-                    String strCod = vProductos.get(selectedRow).getCodigo();
-                    if (ArchivoProducto.anularRegistro(strCod, path)) {
+                    String code = vProductos.get(selectedRow).getCodigo();
+                    if (ArchivoProducto.anularRegistro(code, path)) {
                         mostrarDatosDeRegistroTabla();
                         Base.mensaje("Producto eliminado", getTitle(), JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -291,335 +293,366 @@ public final class JFrameRegistro extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JToolBar jToolBarRegistro = new javax.swing.JToolBar();
-        jButtonNuevo = new javax.swing.JButton();
-        jButtonConsultar = new javax.swing.JButton();
-        jButtonGrabar = new javax.swing.JButton();
+        javax.swing.JToolBar jToolBarRecord = new javax.swing.JToolBar();
+        jButtonNew = new javax.swing.JButton();
+        jButtonRead = new javax.swing.JButton();
+        jButtonSave = new javax.swing.JButton();
         jButtonEdit = new javax.swing.JButton();
-        jButtonAnular = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
         jButtonInfo = new javax.swing.JButton();
-        jButtonSalir = new javax.swing.JButton();
-        javax.swing.JPanel jPanelCabecera = new javax.swing.JPanel();
-        jPanelRegistro = new javax.swing.JPanel();
-        javax.swing.JLabel jLabelCodigo = new javax.swing.JLabel();
-        javax.swing.JLabel jLabelDescripcion = new javax.swing.JLabel();
-        javax.swing.JLabel jLabelCantidad = new javax.swing.JLabel();
-        javax.swing.JLabel jLabelPrecio = new javax.swing.JLabel();
-        jTextFieldCodigo = new javax.swing.JTextField();
-        jFormattedTextFieldDescripcion = new javax.swing.JFormattedTextField();
-        jFormattedTextFieldCantidad = new javax.swing.JFormattedTextField();
-        jFormattedTextFieldPrecio = new javax.swing.JFormattedTextField();
-        jCheckBoxExonerado = new javax.swing.JCheckBox();
+        jButtonExit = new javax.swing.JButton();
+        javax.swing.JPanel jPanelHeader = new javax.swing.JPanel();
+        jPanelRecord = new javax.swing.JPanel();
+        javax.swing.JLabel jLabelCode = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelDescription = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelQuantity = new javax.swing.JLabel();
+        javax.swing.JLabel jLabelPrice = new javax.swing.JLabel();
+        jTextFieldCode = new javax.swing.JTextField();
+        jTextFieldDescription = new javax.swing.JTextField();
+        jFormattedTextFieldQuantity = new javax.swing.JFormattedTextField();
+        jFormattedTextFieldPrice = new javax.swing.JFormattedTextField();
+        jCheckBoxExonerated = new javax.swing.JCheckBox();
         jCheckBoxVisible = new javax.swing.JCheckBox();
-        javax.swing.JPanel jPanelDetalle = new javax.swing.JPanel();
-        javax.swing.JScrollPane jScrollPaneDato = new javax.swing.JScrollPane();
-        jTableDato = new javax.swing.JTable();
-        javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
-                getTableData(),
-                COLUMN_NAMES
-        ) {
-            Class[] types = new Class[]{
-                    java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
-            };
-            boolean[] canEdit = new boolean[]{
-                    false, false, false, false, false, false
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        };
+        javax.swing.JPanel jPanelDetail = new javax.swing.JPanel();
+        javax.swing.JScrollPane jScrollPaneData = new javax.swing.JScrollPane();
+        jTableData = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Mantenimiento de Productos");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("view/Bundle"); // NOI18N
+        setTitle(bundle.getString("title.main")); // NOI18N
         setMinimumSize(new java.awt.Dimension(850, 320));
+        setName("mainFrame"); // NOI18N
 
-        jToolBarRegistro.setFloatable(false);
+        jToolBarRecord.setFloatable(false);
 
-        jButtonNuevo.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.gif")));
-        jButtonNuevo.setMnemonic('N');
-        jButtonNuevo.setToolTipText("Nuevo Registro");
-        jButtonNuevo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonNuevo.setFocusable(false);
-        jButtonNuevo.setHideActionText(true);
-        jButtonNuevo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonNuevo.setName("buttonNew"); // NOI18N
-        jButtonNuevo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButtonNuevo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonNuevo.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonNuevo);
+        jButtonNew.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.gif")));
+        jButtonNew.setMnemonic('N');
+        jButtonNew.setToolTipText(bundle.getString("label.toolTipText.new")); // NOI18N
+        jButtonNew.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonNew.setFocusable(false);
+        jButtonNew.setHideActionText(true);
+        jButtonNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonNew.setName("buttonNew"); // NOI18N
+        jButtonNew.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButtonNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonNew);
 
-        jButtonConsultar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonConsultar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/consultar.gif")));
-        jButtonConsultar.setMnemonic('C');
-        jButtonConsultar.setToolTipText("Consultar Registro");
-        jButtonConsultar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonConsultar.setFocusable(false);
-        jButtonConsultar.setHideActionText(true);
-        jButtonConsultar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonConsultar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButtonConsultar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonConsultar.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonConsultar);
+        jButtonRead.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonRead.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/consultar.gif")));
+        jButtonRead.setMnemonic('C');
+        jButtonRead.setToolTipText(bundle.getString("label.toolTipText.read")); // NOI18N
+        jButtonRead.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonRead.setFocusable(false);
+        jButtonRead.setHideActionText(true);
+        jButtonRead.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonRead.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButtonRead.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonRead.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonRead);
 
-        jButtonGrabar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonGrabar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/grabar.gif")));
-        jButtonGrabar.setMnemonic('G');
-        jButtonGrabar.setToolTipText("Grabar Registro");
-        jButtonGrabar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonGrabar.setEnabled(false);
-        jButtonGrabar.setFocusable(false);
-        jButtonGrabar.setHideActionText(true);
-        jButtonGrabar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonGrabar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButtonGrabar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonGrabar.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonGrabar);
+        jButtonSave.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/grabar.gif")));
+        jButtonSave.setMnemonic('G');
+        jButtonSave.setToolTipText(bundle.getString("label.toolTipText.save")); // NOI18N
+        jButtonSave.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSave.setEnabled(false);
+        jButtonSave.setFocusable(false);
+        jButtonSave.setHideActionText(true);
+        jButtonSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButtonSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonSave);
 
         jButtonEdit.setBackground(new java.awt.Color(255, 255, 255));
         jButtonEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/edit.gif")));
         jButtonEdit.setMnemonic('E');
-        jButtonEdit.setToolTipText("Editar Registro");
+        jButtonEdit.setToolTipText(bundle.getString("label.toolTipText.edit")); // NOI18N
         jButtonEdit.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonEdit.setFocusable(false);
         jButtonEdit.setHideActionText(true);
         jButtonEdit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonEdit.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonEdit);
+        jButtonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonEdit);
 
-        jButtonAnular.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/anular.gif")));
-        jButtonAnular.setMnemonic('A');
-        jButtonAnular.setToolTipText("Anular Registro");
-        jButtonAnular.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonAnular.setFocusable(false);
-        jButtonAnular.setHideActionText(true);
-        jButtonAnular.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonAnular.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButtonAnular.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonAnular.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonAnular);
+        jButtonDelete.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/anular.gif")));
+        jButtonDelete.setMnemonic('A');
+        jButtonDelete.setToolTipText(bundle.getString("label.toolTipText.delete")); // NOI18N
+        jButtonDelete.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonDelete.setFocusable(false);
+        jButtonDelete.setHideActionText(true);
+        jButtonDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonDelete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButtonDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonDelete);
 
         jButtonInfo.setBackground(new java.awt.Color(255, 255, 255));
         jButtonInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/info.gif")));
         jButtonInfo.setMnemonic('I');
-        jButtonInfo.setToolTipText("Información");
+        jButtonInfo.setToolTipText(bundle.getString("label.toolTipText.info")); // NOI18N
         jButtonInfo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonInfo.setFocusable(false);
         jButtonInfo.setHideActionText(true);
         jButtonInfo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonInfo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonInfo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonInfo.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonInfo);
+        jButtonInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonInfo);
 
-        jButtonSalir.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/salir.gif")));
-        jButtonSalir.setMnemonic('S');
-        jButtonSalir.setToolTipText("Salir de la Programa");
-        jButtonSalir.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonSalir.setFocusable(false);
-        jButtonSalir.setHideActionText(true);
-        jButtonSalir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonSalir.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButtonSalir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonSalir.addActionListener(this::formActionPerformed);
-        jToolBarRegistro.add(jButtonSalir);
+        jButtonExit.setBackground(new java.awt.Color(255, 255, 255));
+        jButtonExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/salir.gif")));
+        jButtonExit.setMnemonic('S');
+        jButtonExit.setToolTipText(bundle.getString("label.toolTipText.exit")); // NOI18N
+        jButtonExit.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonExit.setFocusable(false);
+        jButtonExit.setHideActionText(true);
+        jButtonExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonExit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButtonExit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formActionPerformed(evt);
+            }
+        });
+        jToolBarRecord.add(jButtonExit);
 
-        jPanelCabecera.setBackground(new java.awt.Color(255, 255, 255));
-        jPanelCabecera.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanelHeader.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelHeader.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jPanelRegistro.setBackground(new java.awt.Color(255, 255, 255));
-        jPanelRegistro.setBorder(javax.swing.BorderFactory.createTitledBorder("Producto"));
+        jPanelRecord.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelRecord.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("label.product"))); // NOI18N
 
-        jLabelCodigo.setText("Codigo:");
+        jLabelCode.setText(bundle.getString("form.code")); // NOI18N
 
-        jLabelDescripcion.setText("Descripcion:");
+        jLabelDescription.setText(bundle.getString("form.description")); // NOI18N
 
-        jLabelCantidad.setText("Cantidad:");
+        jLabelQuantity.setText(bundle.getString("form.quantity")); // NOI18N
 
-        jLabelPrecio.setText("Precio:");
+        jLabelPrice.setText(bundle.getString("form.price")); // NOI18N
 
-        jTextFieldCodigo.setEditable(false);
-        jTextFieldCodigo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jTextFieldCodigo.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        jTextFieldCode.setEditable(false);
+        jTextFieldCode.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldCode.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
-        jFormattedTextFieldDescripcion.requestFocus();
-        jFormattedTextFieldDescripcion.addKeyListener(new java.awt.event.KeyAdapter() {
+        jTextFieldDescription.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
         });
 
-        jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(5, 0, '0'));
-        jFormattedTextFieldCantidad.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        jFormattedTextFieldCantidad.addKeyListener(new java.awt.event.KeyAdapter() {
+        jFormattedTextFieldQuantity.setFormatterFactory(Base.creaFormatoControl(5, 0, '0'));
+        jFormattedTextFieldQuantity.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        jFormattedTextFieldQuantity.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
         });
 
-        jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(2, 2, '0'));
-        jFormattedTextFieldPrecio.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        jFormattedTextFieldPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
+        jFormattedTextFieldPrice.setFormatterFactory(Base.creaFormatoControl(2, 2, '0'));
+        jFormattedTextFieldPrice.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        jFormattedTextFieldPrice.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
         });
 
-        jCheckBoxExonerado.setBackground(new java.awt.Color(255, 255, 255));
-        jCheckBoxExonerado.setSelected(true);
-        jCheckBoxExonerado.setText("Exonerado de IGV");
-        jCheckBoxExonerado.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jCheckBoxExonerado.setFocusable(false);
-        jCheckBoxExonerado.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jCheckBoxExonerado.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jCheckBoxExonerated.setBackground(new java.awt.Color(255, 255, 255));
+        jCheckBoxExonerated.setSelected(true);
+        jCheckBoxExonerated.setText(bundle.getString("form.exonerated")); // NOI18N
+        jCheckBoxExonerated.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBoxExonerated.setFocusable(false);
+        jCheckBoxExonerated.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jCheckBoxExonerated.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         jCheckBoxVisible.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBoxVisible.setSelected(true);
-        jCheckBoxVisible.setText("Visible");
+        jCheckBoxVisible.setText(bundle.getString("form.visible")); // NOI18N
         jCheckBoxVisible.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jCheckBoxVisible.setFocusable(false);
         jCheckBoxVisible.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jCheckBoxVisible.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
-        javax.swing.GroupLayout jPanelRegistroLayout = new javax.swing.GroupLayout(jPanelRegistro);
-        jPanelRegistro.setLayout(jPanelRegistroLayout);
-        jPanelRegistroLayout.setHorizontalGroup(
-                jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jLabelCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                                        .addComponent(jLabelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jTextFieldCodigo)
-                                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                                                .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                                                .addGap(1, 1, 1)))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabelPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabelDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                                                .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                                                .addGap(53, 53, 53)
-                                                .addComponent(jCheckBoxExonerado)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jFormattedTextFieldDescripcion))
-                                .addContainerGap())
+        javax.swing.GroupLayout jPanelRecordLayout = new javax.swing.GroupLayout(jPanelRecord);
+        jPanelRecord.setLayout(jPanelRecordLayout);
+        jPanelRecordLayout.setHorizontalGroup(
+            jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRecordLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabelCode, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                    .addComponent(jLabelQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldCode)
+                    .addGroup(jPanelRecordLayout.createSequentialGroup()
+                        .addComponent(jFormattedTextFieldQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                        .addGap(1, 1, 1)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelRecordLayout.createSequentialGroup()
+                        .addComponent(jFormattedTextFieldPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                        .addGap(53, 53, 53)
+                        .addComponent(jCheckBoxExonerated)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldDescription))
+                .addContainerGap())
         );
-        jPanelRegistroLayout.setVerticalGroup(
-                jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelRegistroLayout.createSequentialGroup()
-                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jFormattedTextFieldDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabelCodigo)
-                                        .addComponent(jTextFieldCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabelDescripcion))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanelRegistroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jFormattedTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jCheckBoxVisible)
-                                        .addComponent(jLabelCantidad)
-                                        .addComponent(jFormattedTextFieldCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabelPrecio)
-                                        .addComponent(jCheckBoxExonerado))
-                                .addContainerGap(13, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanelCabeceraLayout = new javax.swing.GroupLayout(jPanelCabecera);
-        jPanelCabecera.setLayout(jPanelCabeceraLayout);
-        jPanelCabeceraLayout.setHorizontalGroup(
-                jPanelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelCabeceraLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jPanelRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
-        );
-        jPanelCabeceraLayout.setVerticalGroup(
-                jPanelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelCabeceraLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jPanelRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(13, Short.MAX_VALUE))
+        jPanelRecordLayout.setVerticalGroup(
+            jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRecordLayout.createSequentialGroup()
+                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelCode)
+                    .addComponent(jTextFieldCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelDescription)
+                    .addComponent(jTextFieldDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jFormattedTextFieldPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBoxVisible)
+                    .addComponent(jLabelQuantity)
+                    .addComponent(jFormattedTextFieldQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelPrice)
+                    .addComponent(jCheckBoxExonerated))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
-        jPanelDetalle.setBackground(new java.awt.Color(255, 255, 255));
-        jPanelDetalle.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jTextFieldDescription.requestFocus();
 
-        jScrollPaneDato.setBackground(new java.awt.Color(255, 255, 255));
+        javax.swing.GroupLayout jPanelHeaderLayout = new javax.swing.GroupLayout(jPanelHeader);
+        jPanelHeader.setLayout(jPanelHeaderLayout);
+        jPanelHeaderLayout.setHorizontalGroup(
+            jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelHeaderLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanelRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanelHeaderLayout.setVerticalGroup(
+            jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelHeaderLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanelRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(13, Short.MAX_VALUE))
+        );
 
-        jTableDato.setModel(defaultTableModel);
-        jTableDato.getTableHeader().setReorderingAllowed(false);
-        jTableDato.addKeyListener(new java.awt.event.KeyAdapter() {
+        jPanelDetail.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelDetail.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jScrollPaneData.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
+            getTableData(),
+            COLUMN_NAMES
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
+        jTableData.setModel(defaultTableModel);
+        jTableData.getTableHeader().setReorderingAllowed(false);
+        jTableData.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
         });
-        jScrollPaneDato.setViewportView(jTableDato);
+        jScrollPaneData.setViewportView(jTableData);
 
-        javax.swing.GroupLayout jPanelDetalleLayout = new javax.swing.GroupLayout(jPanelDetalle);
-        jPanelDetalle.setLayout(jPanelDetalleLayout);
-        jPanelDetalleLayout.setHorizontalGroup(
-                jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelDetalleLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                                .addContainerGap())
+        javax.swing.GroupLayout jPanelDetailLayout = new javax.swing.GroupLayout(jPanelDetail);
+        jPanelDetail.setLayout(jPanelDetailLayout);
+        jPanelDetailLayout.setHorizontalGroup(
+            jPanelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelDetailLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPaneData, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        jPanelDetalleLayout.setVerticalGroup(
-                jPanelDetalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanelDetalleLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPaneDato, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                                .addContainerGap())
+        jPanelDetailLayout.setVerticalGroup(
+            jPanelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelDetailLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPaneData, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jToolBarRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
-                        .addComponent(jPanelCabecera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jToolBarRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
+            .addComponent(jPanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(jToolBarRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanelCabecera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanelDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jToolBarRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
-        Base.centrarVentana(this);
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         LOG.trace(evt.paramString());
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            if (evt.getSource().equals(jFormattedTextFieldDescripcion)) {
-                jFormattedTextFieldCantidad.requestFocus();
-            } else if (evt.getSource().equals(jFormattedTextFieldCantidad)) {
-                jFormattedTextFieldPrecio.requestFocus();
-            } else if (evt.getSource().equals(jFormattedTextFieldPrecio)
-                    && jButtonGrabar.isEnabled()) {
+            if (evt.getSource().equals(jTextFieldDescription)) {
+                jFormattedTextFieldQuantity.requestFocus();
+            } else if (evt.getSource().equals(jFormattedTextFieldQuantity)) {
+                jFormattedTextFieldPrice.requestFocus();
+            } else if (evt.getSource().equals(jFormattedTextFieldPrice)
+                    && jButtonSave.isEnabled()) {
                 grabarRegistro();
             }
         }
@@ -636,15 +669,15 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private void formActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formActionPerformed
         LOG.debug("Current action: {}", currentAction);
-        if (evt.getSource().equals(jButtonNuevo)) {
+        if (evt.getSource().equals(jButtonNew)) {
             LOG.info("Nuevo registro");
             nuevoRegistro();
         }
-        if (evt.getSource().equals(jButtonConsultar)) {
+        if (evt.getSource().equals(jButtonRead)) {
             LOG.info("Consultar registro");
             consultarRegistro();
         }
-        if (evt.getSource().equals(jButtonGrabar)) {
+        if (evt.getSource().equals(jButtonSave)) {
             LOG.info("Grabar registro");
             grabarRegistro();
         }
@@ -652,7 +685,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
             LOG.info("Editar registro");
             editarRegistro();
         }
-        if (evt.getSource().equals(jButtonAnular)) {
+        if (evt.getSource().equals(jButtonDelete)) {
             LOG.info("Anular registro");
             anularRegistro();
         }
@@ -660,27 +693,27 @@ public final class JFrameRegistro extends javax.swing.JFrame {
             LOG.info("Mostrar detalle de la PC");
             info();
         }
-        if (evt.getSource().equals(jButtonSalir)) {
+        if (evt.getSource().equals(jButtonExit)) {
             LOG.info("Salir de la aplicacion");
             salirRegistro();
         }
     }//GEN-LAST:event_formActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAnular;
-    private javax.swing.JButton jButtonConsultar;
+    private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonEdit;
-    private javax.swing.JButton jButtonGrabar;
+    private javax.swing.JButton jButtonExit;
     private javax.swing.JButton jButtonInfo;
-    private javax.swing.JButton jButtonNuevo;
-    private javax.swing.JButton jButtonSalir;
-    private javax.swing.JCheckBox jCheckBoxExonerado;
+    private javax.swing.JButton jButtonNew;
+    private javax.swing.JButton jButtonRead;
+    private javax.swing.JButton jButtonSave;
+    private javax.swing.JCheckBox jCheckBoxExonerated;
     private javax.swing.JCheckBox jCheckBoxVisible;
-    private javax.swing.JFormattedTextField jFormattedTextFieldCantidad;
-    private javax.swing.JFormattedTextField jFormattedTextFieldDescripcion;
-    private javax.swing.JFormattedTextField jFormattedTextFieldPrecio;
-    private javax.swing.JPanel jPanelRegistro;
-    private javax.swing.JTable jTableDato;
-    private javax.swing.JTextField jTextFieldCodigo;
+    private javax.swing.JFormattedTextField jFormattedTextFieldPrice;
+    private javax.swing.JFormattedTextField jFormattedTextFieldQuantity;
+    private javax.swing.JPanel jPanelRecord;
+    private javax.swing.JTable jTableData;
+    private javax.swing.JTextField jTextFieldCode;
+    private javax.swing.JTextField jTextFieldDescription;
     // End of variables declaration//GEN-END:variables
 }
