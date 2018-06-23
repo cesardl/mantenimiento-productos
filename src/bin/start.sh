@@ -1,3 +1,5 @@
 #!/bin/sh
 
-java -jar ../lib/mantenimiento-productos-1.0.jar
+CURRENT_DIR=$(cd "`dirname $0`" && pwd)
+
+java -jar -Dapp.home=$CURRENT_DIR ../lib/mantenimiento-productos-1.0.jar

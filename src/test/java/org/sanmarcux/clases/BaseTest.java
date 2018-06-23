@@ -3,6 +3,7 @@ package org.sanmarcux.clases;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created on 16/12/2017.
@@ -45,5 +46,32 @@ public class BaseTest {
 
         result = Base.convertirCadenaEnteroLargo("abc");
         assertEquals(-99999, result);
+    }
+
+    @Test
+    public void completarIzquierda() {
+        String result = Base.completarIzquierda("abcdef", 2, "@");
+        assertEquals("ab", result);
+
+        result = Base.completarIzquierda("abcdef", 10, "@");
+        assertEquals("@@@@abcdef", result);
+    }
+
+    @Test
+    public void completarDerecha() {
+        String result = Base.completarDerecha("abcdef", 2, "@");
+        assertEquals("ab", result);
+
+        result = Base.completarDerecha("abcdef", 10, "@");
+        assertEquals("abcdef@@@@", result);
+    }
+
+    @Test
+    public void centrarCadena() {
+        String result = Base.centrarCadena("abcdef", 2, "@");
+        assertTrue(result.isEmpty());
+
+        result = Base.centrarCadena("abcdef", 10, "@");
+        assertEquals("@@abcdef@@", result);
     }
 }

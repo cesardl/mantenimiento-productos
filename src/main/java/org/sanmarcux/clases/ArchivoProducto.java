@@ -32,15 +32,19 @@ public final class ArchivoProducto {
 
     /**
      * @param producto producto a agregar
-     * @param ruta     ubicacion del fichero de datos
+     * @param path     ubicacion del fichero de datos
      */
-    public static void crearArchivo(Producto producto, String ruta) {
-        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
+    public static boolean crearArchivo(final Producto producto, final String path) {
+        boolean band;
+        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(path))) {
             salida.writeObject(producto);
             LOG.info("Creando nuevo archivo, se registro el primer producto");
+            band = true;
         } catch (IOException e) {
-            LOG.error(IO_ERROR_MESSAGE, ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, path, e);
+            band = false;
         }
+        return band;
     }
 
     /**
@@ -103,14 +107,18 @@ public final class ArchivoProducto {
      * @param producto producto a agregar
      * @param ruta     ubicacion del fichero de datos
      */
-    public static void adicionarRegistro(Producto producto, String ruta) {
+    public static boolean adicionarRegistro(Producto producto, String ruta) {
+        boolean band;
         try (AppendingObjectOutputStream salida = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
             salida.writeUnshared(producto);
             salida.flush();
             LOG.info("Producto agregado: {}", producto.getCodigo());
+            band = true;
         } catch (IOException e) {
             LOG.error(IO_ERROR_MESSAGE, ruta, e);
+            band = false;
         }
+        return band;
     }
 
     /**
@@ -182,7 +190,7 @@ public final class ArchivoProducto {
      * @param ruta   ubicacion del fichero de datos
      * @return registro consultado
      */
-    public static String consultarRegistro(final String codigo, final String ruta) {
+    public static Producto consultarRegistro(final String codigo, final String ruta) {
         List<Producto> v = new ArrayList<>();
 
         cargarRegistrosArray(v, ruta);
@@ -192,8 +200,7 @@ public final class ArchivoProducto {
         return v.stream()
                 .filter(p -> p.getCodigo().compareTo(codigo) == 0)
                 .findFirst()
-                .map(Producto::toString)
-                .orElse("");
+                .orElse(null);
     }
 
 }

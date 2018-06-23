@@ -61,8 +61,14 @@ public class ArchivoProductoTest {
         boolean isUpdated = ArchivoProducto.modificarRegistro(product, PATH);
         assertTrue(isUpdated);
 
-        String result = ArchivoProducto.consultarRegistro(product.getCodigo(), PATH);
-        assertFalse(result.isEmpty());
+        Producto result = ArchivoProducto.consultarRegistro(product.getCodigo(), PATH);
+        assertNotNull(result.getCodigo());
+        assertNotNull(result.getDescripcion());
+        assertTrue(result.getPrecio() != 0);
+        assertTrue(result.getTotal()!= 0);
+        assertTrue(result.isExonerado());
+        assertFalse(result.isVisible());
+        assertFalse(result.toString().isEmpty());
     }
 
     @Test
@@ -71,7 +77,7 @@ public class ArchivoProductoTest {
         boolean isUpdated = ArchivoProducto.modificarRegistro(p, PATH);
         assertFalse(isUpdated);
 
-        String result = ArchivoProducto.consultarRegistro(p.getCodigo(), PATH);
-        assertTrue(result.isEmpty());
+        Producto result = ArchivoProducto.consultarRegistro(p.getCodigo(), PATH);
+        assertNull(result);
     }
 }

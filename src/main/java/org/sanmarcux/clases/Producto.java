@@ -5,28 +5,14 @@ package org.sanmarcux.clases;
  */
 public class Producto implements java.io.Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3762613621712220046L;
 
-    private int id;
     private String codigo;
     private String descripcion;
     private int total;
     private double precio;
     private boolean exonerado;
     private boolean visible;
-
-    public Producto() {
-        this.id = 0;
-        this.codigo = "00000";
-        this.descripcion = "NODESCRIPCION";
-        this.total = 0;
-        this.precio = 0;
-        this.exonerado = true;
-        this.visible = true;
-    }
 
     public Producto(String codigo, String descripcion, int total, double precio,
                     boolean exonerado, boolean visible) {
@@ -38,60 +24,28 @@ public class Producto implements java.io.Serializable {
         this.visible = visible;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getCodigo() {
         return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public String getDescripcion() {
         return descripcion;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
     public int getTotal() {
         return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
     }
 
     public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
     public boolean isExonerado() {
         return exonerado;
     }
 
-    public void setExonerado(boolean exonerado) {
-        this.exonerado = exonerado;
-    }
-
     public boolean isVisible() {
         return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
     }
 
     @Override

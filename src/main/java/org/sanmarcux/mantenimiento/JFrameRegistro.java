@@ -4,13 +4,12 @@ import org.sanmarcux.clases.ArchivoProducto;
 import org.sanmarcux.clases.Base;
 import org.sanmarcux.clases.Producto;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
 /**
  * @author cesar.diaz
  */
-public final class JFrameRegistro extends javax.swing.JFrame
-        implements java.awt.event.ActionListener, java.awt.event.KeyListener {
+public final class JFrameRegistro extends javax.swing.JFrame {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
 
@@ -24,13 +23,13 @@ public final class JFrameRegistro extends javax.swing.JFrame
         NEW, EDIT, ON_USE
     }
 
-    private final String strRuta;
+    private final String path;
 
     private ActionType currentAction;
     private java.util.List<Producto> vProductos;
 
     public JFrameRegistro(final String path) {
-        this.strRuta = path;
+        this.path = path;
 
         initComponents();
 
@@ -48,24 +47,20 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jCheckBoxVisible.setSelected(true);
     }
 
-    private void controlarEstadoBotonesBarraHerramienta(ActionType opcion) {
-        if (opcion == ActionType.NEW) {
-            jButtonGrabar.setEnabled(true);
+    private void controlarEstadoBotonesBarraHerramienta(final boolean b) {
+        jButtonGrabar.setEnabled(b);
 
+        if (b) {
+            jButtonNuevo.setEnabled(false);
             jButtonConsultar.setEnabled(false);
             jButtonEdit.setEnabled(false);
             jButtonAnular.setEnabled(false);
-            jButtonInfo.setEnabled(false);
-            jButtonSalir.setEnabled(false);
 
-        } else if (opcion == ActionType.EDIT) {
-            jButtonGrabar.setEnabled(false);
-
+        } else {
+            jButtonNuevo.setEnabled(true);
             jButtonConsultar.setEnabled(true);
             jButtonEdit.setEnabled(true);
             jButtonAnular.setEnabled(true);
-            jButtonInfo.setEnabled(true);
-            jButtonSalir.setEnabled(true);
         }
     }
 
@@ -89,7 +84,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
     private Object[][] getTableData() {
         vProductos = new java.util.ArrayList<>();
 
-        ArchivoProducto.cargarRegistrosArray(vProductos, strRuta);
+        ArchivoProducto.cargarRegistrosArray(vProductos, path);
         int size = vProductos.size();
         Object[][] data = new Object[size][6];
 
@@ -109,24 +104,24 @@ public final class JFrameRegistro extends javax.swing.JFrame
         currentAction = ActionType.NEW;
 
         limpiarRegistro();
-        controlarEstadoBotonesBarraHerramienta(ActionType.NEW);
+        controlarEstadoBotonesBarraHerramienta(true);
         controlarEstadoPanelIngresoDeDatos(true);
         jFormattedTextFieldDescripcion.requestFocus();
     }
 
     private void consultarRegistro() {
-        if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
+        if (ArchivoProducto.cantidadRegistros(path) == 0) {
             Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             String strCod = JOptionPane.showInputDialog(this,
                     "Ingrese codigo del producto:", getTitle(), JOptionPane.PLAIN_MESSAGE);
             if (strCod != null) {
-                String strProducto = ArchivoProducto.consultarRegistro(strCod, strRuta);
+                Producto product = ArchivoProducto.consultarRegistro(strCod, path);
 
-                if (strProducto.isEmpty()) {
+                if (product == null) {
                     Base.mensaje("No existe el producto", getTitle(), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    Base.mensaje("Producto:\n" + strProducto, getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                    Base.mensaje("Producto:\n" + product, getTitle(), JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         }
@@ -173,18 +168,19 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 jCheckBoxExonerado.isSelected(),
                 jCheckBoxVisible.isSelected());
 
-        if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
-            ArchivoProducto.crearArchivo(producto, strRuta);
+        boolean result;
+        if (ArchivoProducto.cantidadRegistros(path) == 0) {
+            result = ArchivoProducto.crearArchivo(producto, path);
         } else {
-            ArchivoProducto.adicionarRegistro(producto, strRuta);
+            result = ArchivoProducto.adicionarRegistro(producto, path);
         }
         jTextFieldCodigo.setText(producto.getCodigo());
-        return true;
+        return result;
     }
 
     private void postGrabarRegistro() {
         mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(ActionType.EDIT);
+        controlarEstadoBotonesBarraHerramienta(false);
         controlarEstadoPanelIngresoDeDatos(false);
         Base.mensaje("Se grabo el registro satisfactoriamente.",
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
@@ -200,14 +196,14 @@ public final class JFrameRegistro extends javax.swing.JFrame
                 jCheckBoxExonerado.isSelected(),
                 jCheckBoxVisible.isSelected());
 
-        boolean result = ArchivoProducto.modificarRegistro(producto, strRuta);
+        boolean result = ArchivoProducto.modificarRegistro(producto, path);
         jTextFieldCodigo.setText(producto.getCodigo());
         return result;
     }
 
     private void postEditarRegistro() {
         mostrarDatosDeRegistroTabla();
-        controlarEstadoBotonesBarraHerramienta(ActionType.EDIT);
+        controlarEstadoBotonesBarraHerramienta(false);
         controlarEstadoPanelIngresoDeDatos(false);
         limpiarRegistro();
         Base.mensaje("Se actualizo el registro satisfactoriamente.",
@@ -217,22 +213,18 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
     private void grabarRegistro() {
         if (validarFormulario()) {
-            if (currentAction == ActionType.NEW) {
-                if (grabarRegistroArchivo()) {
-                    postGrabarRegistro();
-                }
+            if (currentAction == ActionType.NEW && grabarRegistroArchivo()) {
+                postGrabarRegistro();
 
-            } else if (currentAction == ActionType.EDIT) {
-                if (editarRegistroArchivo()) {
-                    postEditarRegistro();
-                }
+            } else if (currentAction == ActionType.EDIT && editarRegistroArchivo()) {
+                postEditarRegistro();
 
             }
         }
     }
 
     private void editarRegistro() {
-        if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
+        if (ArchivoProducto.cantidadRegistros(path) == 0) {
             Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             currentAction = ActionType.EDIT;
@@ -243,7 +235,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
             } else {
                 Producto prod = vProductos.get(selectedRow);
 
-                controlarEstadoBotonesBarraHerramienta(ActionType.NEW);
+                controlarEstadoBotonesBarraHerramienta(true);
                 controlarEstadoPanelIngresoDeDatos(true);
 
                 String[] price = String.valueOf(prod.getPrecio()).split("\\.");
@@ -263,7 +255,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private void anularRegistro() {
-        if (ArchivoProducto.cantidadRegistros(strRuta) == 0) {
+        if (ArchivoProducto.cantidadRegistros(path) == 0) {
             Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             int selectedRow = jTableDato.getSelectedRow();
@@ -274,7 +266,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
                         getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
                     String strCod = vProductos.get(selectedRow).getCodigo();
-                    if (ArchivoProducto.anularRegistro(strCod, strRuta)) {
+                    if (ArchivoProducto.anularRegistro(strCod, path)) {
                         mostrarDatosDeRegistroTabla();
                         Base.mensaje("Producto eliminado", getTitle(), JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -284,9 +276,9 @@ public final class JFrameRegistro extends javax.swing.JFrame
     }
 
     private void info() {
-        String mensaje = String.format("%s@%s\n%s %s", Base.getNombreMaquina(), Base.getDireccionIp(), Base.getFecha(), Base.getHoraMinAmPm2());
-        LOG.debug(mensaje);
-        Base.mensaje(mensaje, getTitle(), JOptionPane.PLAIN_MESSAGE);
+        String message = String.format("%s@%s\n%s %s", Base.getNombreMaquina(), Base.getDireccionIp(), Base.getFecha(), Base.getHoraMinAmPm2());
+        LOG.debug(message);
+        Base.mensaje(message, getTitle(), JOptionPane.PLAIN_MESSAGE);
     }
 
     private void salirRegistro() {
@@ -333,10 +325,12 @@ public final class JFrameRegistro extends javax.swing.JFrame
                     false, false, false, false, false, false
             };
 
+            @Override
             public Class getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
 
+            @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit[columnIndex];
             }
@@ -359,7 +353,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonNuevo.setName("buttonNew"); // NOI18N
         jButtonNuevo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonNuevo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonNuevo.addActionListener(this);
+        jButtonNuevo.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonNuevo);
 
         jButtonConsultar.setBackground(new java.awt.Color(255, 255, 255));
@@ -372,7 +366,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonConsultar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonConsultar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonConsultar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonConsultar.addActionListener(this);
+        jButtonConsultar.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonConsultar);
 
         jButtonGrabar.setBackground(new java.awt.Color(255, 255, 255));
@@ -386,7 +380,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonGrabar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonGrabar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonGrabar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonGrabar.addActionListener(this);
+        jButtonGrabar.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonGrabar);
 
         jButtonEdit.setBackground(new java.awt.Color(255, 255, 255));
@@ -399,7 +393,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonEdit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonEdit.addActionListener(this);
+        jButtonEdit.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonEdit);
 
         jButtonAnular.setBackground(new java.awt.Color(255, 255, 255));
@@ -412,7 +406,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonAnular.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonAnular.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonAnular.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonAnular.addActionListener(this);
+        jButtonAnular.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonAnular);
 
         jButtonInfo.setBackground(new java.awt.Color(255, 255, 255));
@@ -425,7 +419,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonInfo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonInfo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonInfo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonInfo.addActionListener(this);
+        jButtonInfo.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonInfo);
 
         jButtonSalir.setBackground(new java.awt.Color(255, 255, 255));
@@ -438,7 +432,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jButtonSalir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonSalir.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonSalir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonSalir.addActionListener(this);
+        jButtonSalir.addActionListener(this::formActionPerformed);
         jToolBarRegistro.add(jButtonSalir);
 
         jPanelCabecera.setBackground(new java.awt.Color(255, 255, 255));
@@ -460,20 +454,33 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jTextFieldCodigo.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
         jFormattedTextFieldDescripcion.requestFocus();
-        jFormattedTextFieldDescripcion.addKeyListener(this);
+        jFormattedTextFieldDescripcion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
-        jFormattedTextFieldCantidad.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         jFormattedTextFieldCantidad.setFormatterFactory(Base.creaFormatoControl(5, 0, '0'));
-        jFormattedTextFieldCantidad.addKeyListener(this);
+        jFormattedTextFieldCantidad.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        jFormattedTextFieldCantidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
-        jFormattedTextFieldPrecio.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         jFormattedTextFieldPrecio.setFormatterFactory(Base.creaFormatoControl(2, 2, '0'));
-        jFormattedTextFieldPrecio.addKeyListener(this);
+        jFormattedTextFieldPrecio.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        jFormattedTextFieldPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jCheckBoxExonerado.setBackground(new java.awt.Color(255, 255, 255));
         jCheckBoxExonerado.setSelected(true);
         jCheckBoxExonerado.setText("Exonerado de IGV");
         jCheckBoxExonerado.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBoxExonerado.setFocusable(false);
         jCheckBoxExonerado.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jCheckBoxExonerado.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
@@ -481,6 +488,7 @@ public final class JFrameRegistro extends javax.swing.JFrame
         jCheckBoxVisible.setSelected(true);
         jCheckBoxVisible.setText("Visible");
         jCheckBoxVisible.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jCheckBoxVisible.setFocusable(false);
         jCheckBoxVisible.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jCheckBoxVisible.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
@@ -557,6 +565,11 @@ public final class JFrameRegistro extends javax.swing.JFrame
 
         jTableDato.setModel(defaultTableModel);
         jTableDato.getTableHeader().setReorderingAllowed(false);
+        jTableDato.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
         jScrollPaneDato.setViewportView(jTableDato);
 
         javax.swing.GroupLayout jPanelDetalleLayout = new javax.swing.GroupLayout(jPanelDetalle);
@@ -598,65 +611,60 @@ public final class JFrameRegistro extends javax.swing.JFrame
         Base.centrarVentana(this);
     }// </editor-fold>//GEN-END:initComponents
 
-    @Override
-    public void actionPerformed(java.awt.event.ActionEvent ae) {
-        LOG.debug("Current action: {}", currentAction);
-        if (ae.getSource().equals(jButtonNuevo)) {
-            LOG.debug("Nuevo registro");
-            nuevoRegistro();
-        }
-        if (ae.getSource().equals(jButtonConsultar)) {
-            LOG.debug("Consultar registro");
-            consultarRegistro();
-        }
-        if (ae.getSource().equals(jButtonGrabar)) {
-            LOG.debug("Grabar registro");
-            grabarRegistro();
-        }
-        if (ae.getSource().equals(jButtonEdit)) {
-            LOG.debug("Editar registro");
-            editarRegistro();
-        }
-        if (ae.getSource().equals(jButtonAnular)) {
-            LOG.debug("Anular registro");
-            anularRegistro();
-        }
-        if (ae.getSource().equals(jButtonInfo)) {
-            LOG.debug("Mostrar detalle de la PC");
-            info();
-        }
-        if (ae.getSource().equals(jButtonSalir)) {
-            LOG.debug("Salir de la aplicacion");
-            salirRegistro();
-        }
-    }
-
-    @Override
-    public void keyPressed(java.awt.event.KeyEvent ke) {
-        LOG.trace(ke.paramString());
-        if (ke.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            if (ke.getSource() == jFormattedTextFieldDescripcion) {
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        LOG.trace(evt.paramString());
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            if (evt.getSource().equals(jFormattedTextFieldDescripcion)) {
                 jFormattedTextFieldCantidad.requestFocus();
-            }
-            if (ke.getSource() == jFormattedTextFieldCantidad) {
+            } else if (evt.getSource().equals(jFormattedTextFieldCantidad)) {
                 jFormattedTextFieldPrecio.requestFocus();
-            }
-            if (ke.getSource() == jFormattedTextFieldPrecio
+            } else if (evt.getSource().equals(jFormattedTextFieldPrecio)
                     && jButtonGrabar.isEnabled()) {
                 grabarRegistro();
             }
         }
-    }
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ESCAPE
+                && currentAction != ActionType.ON_USE) {
 
-    @Override
-    public void keyTyped(java.awt.event.KeyEvent ke) {
-        LOG.trace(ke.paramString());
-    }
+            controlarEstadoBotonesBarraHerramienta(false);
+            controlarEstadoPanelIngresoDeDatos(false);
+            limpiarRegistro();
 
-    @Override
-    public void keyReleased(java.awt.event.KeyEvent ke) {
-        LOG.trace(ke.paramString());
-    }
+            currentAction = ActionType.ON_USE;
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void formActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formActionPerformed
+        LOG.debug("Current action: {}", currentAction);
+        if (evt.getSource().equals(jButtonNuevo)) {
+            LOG.info("Nuevo registro");
+            nuevoRegistro();
+        }
+        if (evt.getSource().equals(jButtonConsultar)) {
+            LOG.info("Consultar registro");
+            consultarRegistro();
+        }
+        if (evt.getSource().equals(jButtonGrabar)) {
+            LOG.info("Grabar registro");
+            grabarRegistro();
+        }
+        if (evt.getSource().equals(jButtonEdit)) {
+            LOG.info("Editar registro");
+            editarRegistro();
+        }
+        if (evt.getSource().equals(jButtonAnular)) {
+            LOG.info("Anular registro");
+            anularRegistro();
+        }
+        if (evt.getSource().equals(jButtonInfo)) {
+            LOG.info("Mostrar detalle de la PC");
+            info();
+        }
+        if (evt.getSource().equals(jButtonSalir)) {
+            LOG.info("Salir de la aplicacion");
+            salirRegistro();
+        }
+    }//GEN-LAST:event_formActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAnular;

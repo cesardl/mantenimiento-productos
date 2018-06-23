@@ -74,10 +74,10 @@ public final class Base {
     }
 
     /**
-     * @param cadena
-     * @param cantidad
-     * @param simbolo
-     * @return
+     * @param cadena   base string
+     * @param cantidad desired string size
+     * @param simbolo  character used to complete
+     * @return altered string
      */
     public static String completarIzquierda(String cadena, int cantidad, String simbolo) {
         StringBuilder aux = new StringBuilder();
@@ -101,10 +101,10 @@ public final class Base {
     }
 
     /**
-     * @param cadena
-     * @param cantidad
-     * @param simbolo
-     * @return
+     * @param cadena   base string
+     * @param cantidad desired string size
+     * @param simbolo  character used to complete
+     * @return altered string
      */
     public static String completarDerecha(String cadena, int cantidad, String simbolo) {
         StringBuilder aux = new StringBuilder();
@@ -128,10 +128,10 @@ public final class Base {
     }
 
     /**
-     * @param cadena
-     * @param cantidad
-     * @param simbolo
-     * @return
+     * @param cadena   base string
+     * @param cantidad desired string size
+     * @param simbolo  character used to complete
+     * @return altered string
      */
     public static String centrarCadena(String cadena, int cantidad, String simbolo) {
         String aux = "";
@@ -156,7 +156,7 @@ public final class Base {
     }
 
     /**
-     * @return
+     * @return the date
      */
     public static String getFecha() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -167,7 +167,7 @@ public final class Base {
     }
 
     /**
-     * @return
+     * @return the hour
      */
     public static String getHoraMinAmPm2() {
         GregorianCalendar calendario = new GregorianCalendar();
@@ -201,7 +201,7 @@ public final class Base {
     }
 
     /**
-     * @return
+     * @return the machine name
      */
     public static String getNombreMaquina() {
         String dato;
@@ -229,22 +229,22 @@ public final class Base {
     }
 
     /**
-     * @param jfrmVentana ventana a centrar
+     * @param frame ventana a centrar
      */
-    public static void centrarVentana(javax.swing.JFrame jfrmVentana) {
+    public static void centrarVentana(final javax.swing.JFrame frame) {
         java.awt.Dimension tamPantalla = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
         int x = (int) tamPantalla.getWidth();
         int y = (int) tamPantalla.getHeight();
         LOG.debug("Tamanho de pantalla ({}, {})", x, y);
 
-        int width = (int) jfrmVentana.getSize().getWidth();
-        int height = (int) jfrmVentana.getSize().getHeight();
+        int width = (int) frame.getSize().getWidth();
+        int height = (int) frame.getSize().getHeight();
         LOG.debug("Dimensión de la aplicacion ({}, {})", width, height);
 
         x = (x / 2) - (width / 2);
         y = (y / 2) - (height / 2);
-        jfrmVentana.setBounds(x, y, width, height);
+        frame.setBounds(x, y, width, height);
     }
 
     /**
