@@ -68,7 +68,6 @@ public class ArchivoProductoTest {
         assertTrue(result.getTotal()!= 0);
         assertTrue(result.isExonerado());
         assertFalse(result.isVisible());
-        assertFalse(result.toString().isEmpty());
     }
 
     @Test

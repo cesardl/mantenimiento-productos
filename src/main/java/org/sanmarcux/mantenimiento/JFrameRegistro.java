@@ -13,12 +13,15 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(JFrameRegistro.class);
 
-    // private static final java.util.ResourceBundle APPLICATION_RESOURCES = java.util.ResourceBundle.getBundle("view/Bundle");
-
-    private static final String PRODUCTS_NOT_FOUND_MESSAGE = "No existen productos";
+    private static final java.util.ResourceBundle APPLICATION_RESOURCES = java.util.ResourceBundle.getBundle("view/Bundle");
 
     private static final String[] COLUMN_NAMES = {
-        "Codigo", "Descripcion", "Cantidad", "Precio", "Exonerado", "Visible"
+            APPLICATION_RESOURCES.getString("table.columnText.code"),
+            APPLICATION_RESOURCES.getString("table.columnText.description"),
+            APPLICATION_RESOURCES.getString("table.columnText.quantity"),
+            APPLICATION_RESOURCES.getString("table.columnText.price"),
+            APPLICATION_RESOURCES.getString("table.columnText.exonerated"),
+            APPLICATION_RESOURCES.getString("table.columnText.visible")
     };
 
     private enum ActionType {
@@ -28,7 +31,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
     private final String path;
 
     private ActionType currentAction;
-    private java.util.List<Producto> vProductos;
+    private java.util.List<Producto> vProducts;
 
     public JFrameRegistro(final String path) {
         this.path = path;
@@ -70,6 +73,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         java.awt.Component[] components = jPanelRecord.getComponents();
         for (java.awt.Component c : components) {
             if (c instanceof javax.swing.JFormattedTextField
+                    || c.equals(jTextFieldDescription)
                     || c instanceof javax.swing.JCheckBox) {
                 c.setEnabled(b);
             }
@@ -84,14 +88,14 @@ public final class JFrameRegistro extends javax.swing.JFrame {
     }
 
     private Object[][] getTableData() {
-        vProductos = new java.util.ArrayList<>();
+        vProducts = new java.util.ArrayList<>();
 
-        ArchivoProducto.cargarRegistrosArray(vProductos, path);
-        int size = vProductos.size();
+        ArchivoProducto.cargarRegistrosArray(vProducts, path);
+        int size = vProducts.size();
         Object[][] data = new Object[size][6];
 
         for (int i = 0; i < size; i++) {
-            Producto p = vProductos.get(i);
+            Producto p = vProducts.get(i);
             data[i][0] = p.getCodigo();
             data[i][1] = p.getDescripcion();
             data[i][2] = p.getTotal();
@@ -113,51 +117,53 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private void consultarRegistro() {
         if (ArchivoProducto.cantidadRegistros(path) == 0) {
-            Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.productsNotFound"), getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
-            String strCod = JOptionPane.showInputDialog(this,
-                    "Ingrese codigo del producto:", getTitle(), JOptionPane.PLAIN_MESSAGE);
-            if (strCod != null) {
-                Producto product = ArchivoProducto.consultarRegistro(strCod, path);
+            String productCode = JOptionPane.showInputDialog(this,
+                    APPLICATION_RESOURCES.getString("messages.insertProductCode"), getTitle(), JOptionPane.PLAIN_MESSAGE);
+            if (productCode != null) {
+                Producto product = ArchivoProducto.consultarRegistro(productCode, path);
 
                 if (product == null) {
-                    Base.mensaje("No existe el producto", getTitle(), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.productNotFound"), getTitle(), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    Base.mensaje("Producto:\n" + product, getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                    String detail = APPLICATION_RESOURCES.getString("label.product") + '\n'
+                            + APPLICATION_RESOURCES.getString("form.code") + ' ' + product.getCodigo() + '\n'
+                            + APPLICATION_RESOURCES.getString("form.description") + ' ' + product.getDescripcion() + '\n'
+                            + APPLICATION_RESOURCES.getString("form.quantity") + ' ' + product.getTotal() + '\n'
+                            + APPLICATION_RESOURCES.getString("form.price") + ' ' + product.getPrecio() + '\n'
+                            + APPLICATION_RESOURCES.getString("form.exonerated") + ' ' + convert(product.isExonerado()) + '\n'
+                            + APPLICATION_RESOURCES.getString("form.visible") + ' ' + convert(product.isVisible());
+                    JOptionPane.showMessageDialog(this, detail, getTitle(), JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         }
     }
 
+    private String convert(boolean b) {
+        return b
+                ? APPLICATION_RESOURCES.getString("label.true")
+                : APPLICATION_RESOURCES.getString("label.false");
+    }
+
     private boolean validarFormulario() {
-        int iValor = 0;
-
         if (jTextFieldDescription.getText().isEmpty()) {
-            iValor = 2;
+            JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("validation.form.wrongDescription"), getTitle(), JOptionPane.ERROR_MESSAGE);
+            jTextFieldDescription.requestFocus();
+            return false;
+
         } else if (Base.convertirCadenaReal(jFormattedTextFieldQuantity.getText().trim()) == 0) {
-            iValor = 3;
+            JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("validation.form.wrongQuantity"), getTitle(), JOptionPane.ERROR_MESSAGE);
+            jFormattedTextFieldQuantity.requestFocus();
+            return false;
+
         } else if (Base.convertirCadenaReal(jFormattedTextFieldPrice.getText().trim()) == 0) {
-            iValor = 4;
-        }
+            JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("validation.form.wrongPrice"), getTitle(), JOptionPane.ERROR_MESSAGE);
+            jFormattedTextFieldPrice.requestFocus();
+            return false;
 
-        switch (iValor) {
-            case 2:
-                Base.mensaje("Ingrese correctamente la Descripcion.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jTextFieldDescription.requestFocus();
-                return false;
-
-            case 3:
-                Base.mensaje("Ingrese correctamente la Cantidad.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jFormattedTextFieldQuantity.requestFocus();
-                return false;
-
-            case 4:
-                Base.mensaje("Ingrese correctamente el Precio.", getTitle(), JOptionPane.ERROR_MESSAGE);
-                jFormattedTextFieldPrice.requestFocus();
-                return false;
-
-            default:
-                return true;
+        } else {
+            return true;
         }
     }
 
@@ -184,7 +190,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         mostrarDatosDeRegistroTabla();
         controlarEstadoBotonesBarraHerramienta(false);
         controlarEstadoPanelIngresoDeDatos(false);
-        Base.mensaje("Se grabo el registro satisfactoriamente.",
+        JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.successful.savedRecord"),
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
         currentAction = ActionType.ON_USE;
     }
@@ -208,7 +214,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         controlarEstadoBotonesBarraHerramienta(false);
         controlarEstadoPanelIngresoDeDatos(false);
         limpiarRegistro();
-        Base.mensaje("Se actualizo el registro satisfactoriamente.",
+        JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.successful.updatedRecord"),
                 getTitle(), JOptionPane.INFORMATION_MESSAGE);
         currentAction = ActionType.ON_USE;
     }
@@ -227,15 +233,15 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private void editarRegistro() {
         if (ArchivoProducto.cantidadRegistros(path) == 0) {
-            Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.productsNotFound"), getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             currentAction = ActionType.EDIT;
 
             int selectedRow = jTableData.getSelectedRow();
             if (selectedRow == -1) {
-                Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.selectProduct"), getTitle(), JOptionPane.WARNING_MESSAGE);
             } else {
-                Producto prod = vProductos.get(selectedRow);
+                Producto prod = vProducts.get(selectedRow);
 
                 controlarEstadoBotonesBarraHerramienta(true);
                 controlarEstadoPanelIngresoDeDatos(true);
@@ -258,33 +264,27 @@ public final class JFrameRegistro extends javax.swing.JFrame {
 
     private void anularRegistro() {
         if (ArchivoProducto.cantidadRegistros(path) == 0) {
-            Base.mensaje(PRODUCTS_NOT_FOUND_MESSAGE, getTitle(), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.productsNotFound"), getTitle(), JOptionPane.WARNING_MESSAGE);
         } else {
             int selectedRow = jTableData.getSelectedRow();
             if (selectedRow == -1) {
-                Base.mensaje("Seleccione un producto", getTitle(), JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.selectProduct"), getTitle(), JOptionPane.WARNING_MESSAGE);
             } else {
-                if (JOptionPane.showConfirmDialog(this, "Seguro que desea eliminar este producto?",
+                if (JOptionPane.showConfirmDialog(this, APPLICATION_RESOURCES.getString("messages.deleteProduct"),
                         getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
-                    String code = vProductos.get(selectedRow).getCodigo();
+                    String code = vProducts.get(selectedRow).getCodigo();
                     if (ArchivoProducto.anularRegistro(code, path)) {
                         mostrarDatosDeRegistroTabla();
-                        Base.mensaje("Producto eliminado", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, APPLICATION_RESOURCES.getString("messages.successful.deletedRecord"), getTitle(), JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
         }
     }
 
-    private void info() {
-        String message = String.format("%s@%s\n%s %s", Base.getNombreMaquina(), Base.getDireccionIp(), Base.getFecha(), Base.getHoraMinAmPm2());
-        LOG.debug(message);
-        Base.mensaje(message, getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-
     private void salirRegistro() {
-        if (JOptionPane.showConfirmDialog(this, "Seguro que desea salir?",
+        if (JOptionPane.showConfirmDialog(this, APPLICATION_RESOURCES.getString("messages.exitApplication"),
                 getTitle(), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
@@ -336,11 +336,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonNew.setName("buttonNew"); // NOI18N
         jButtonNew.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonNew.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonNew);
 
         jButtonRead.setBackground(new java.awt.Color(255, 255, 255));
@@ -353,11 +349,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonRead.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonRead.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonRead.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonRead.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonRead.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonRead);
 
         jButtonSave.setBackground(new java.awt.Color(255, 255, 255));
@@ -371,11 +363,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonSave.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonSave.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonSave);
 
         jButtonEdit.setBackground(new java.awt.Color(255, 255, 255));
@@ -388,11 +376,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonEdit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonEdit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonEdit.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonEdit);
 
         jButtonDelete.setBackground(new java.awt.Color(255, 255, 255));
@@ -405,11 +389,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonDelete.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonDelete.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonDelete);
 
         jButtonInfo.setBackground(new java.awt.Color(255, 255, 255));
@@ -422,11 +402,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonInfo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonInfo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonInfo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonInfo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonInfo.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonInfo);
 
         jButtonExit.setBackground(new java.awt.Color(255, 255, 255));
@@ -439,11 +415,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jButtonExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonExit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jButtonExit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                formActionPerformed(evt);
-            }
-        });
+        jButtonExit.addActionListener(this::formActionPerformed);
         jToolBarRecord.add(jButtonExit);
 
         jPanelHeader.setBackground(new java.awt.Color(255, 255, 255));
@@ -461,10 +433,11 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jLabelPrice.setText(bundle.getString("form.price")); // NOI18N
 
         jTextFieldCode.setEditable(false);
-        jTextFieldCode.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldCode.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 11)); // NOI18N
         jTextFieldCode.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
         jTextFieldDescription.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
@@ -473,6 +446,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jFormattedTextFieldQuantity.setFormatterFactory(Base.creaFormatoControl(5, 0, '0'));
         jFormattedTextFieldQuantity.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         jFormattedTextFieldQuantity.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
@@ -481,6 +455,7 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jFormattedTextFieldPrice.setFormatterFactory(Base.creaFormatoControl(2, 2, '0'));
         jFormattedTextFieldPrice.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         jFormattedTextFieldPrice.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
@@ -505,50 +480,50 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanelRecordLayout = new javax.swing.GroupLayout(jPanelRecord);
         jPanelRecord.setLayout(jPanelRecordLayout);
         jPanelRecordLayout.setHorizontalGroup(
-            jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelRecordLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabelCode, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                    .addComponent(jLabelQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldCode)
-                    .addGroup(jPanelRecordLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                        .addGap(1, 1, 1)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelRecordLayout.createSequentialGroup()
-                        .addComponent(jFormattedTextFieldPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
-                        .addGap(53, 53, 53)
-                        .addComponent(jCheckBoxExonerated)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextFieldDescription))
-                .addContainerGap())
+                jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelRecordLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabelCode, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                        .addComponent(jLabelQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jTextFieldCode)
+                                        .addGroup(jPanelRecordLayout.createSequentialGroup()
+                                                .addComponent(jFormattedTextFieldQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                                                .addGap(1, 1, 1)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabelPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanelRecordLayout.createSequentialGroup()
+                                                .addComponent(jFormattedTextFieldPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                                                .addGap(53, 53, 53)
+                                                .addComponent(jCheckBoxExonerated)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jCheckBoxVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jTextFieldDescription))
+                                .addContainerGap())
         );
         jPanelRecordLayout.setVerticalGroup(
-            jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelRecordLayout.createSequentialGroup()
-                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelCode)
-                    .addComponent(jTextFieldCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDescription)
-                    .addComponent(jTextFieldDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFormattedTextFieldPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBoxVisible)
-                    .addComponent(jLabelQuantity)
-                    .addComponent(jFormattedTextFieldQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelPrice)
-                    .addComponent(jCheckBoxExonerated))
-                .addContainerGap(13, Short.MAX_VALUE))
+                jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelRecordLayout.createSequentialGroup()
+                                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabelCode)
+                                        .addComponent(jTextFieldCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelDescription)
+                                        .addComponent(jTextFieldDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelRecordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jFormattedTextFieldPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jCheckBoxVisible)
+                                        .addComponent(jLabelQuantity)
+                                        .addComponent(jFormattedTextFieldQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelPrice)
+                                        .addComponent(jCheckBoxExonerated))
+                                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jTextFieldDescription.requestFocus();
@@ -556,18 +531,18 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanelHeaderLayout = new javax.swing.GroupLayout(jPanelHeader);
         jPanelHeader.setLayout(jPanelHeaderLayout);
         jPanelHeaderLayout.setHorizontalGroup(
-            jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelHeaderLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanelRecord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         jPanelHeaderLayout.setVerticalGroup(
-            jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelHeaderLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanelRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jPanelDetail.setBackground(new java.awt.Color(255, 255, 255));
@@ -576,29 +551,30 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         jScrollPaneData.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.table.DefaultTableModel defaultTableModel = new javax.swing.table.DefaultTableModel(
-            getTableData(),
-            COLUMN_NAMES
+                getTableData(),
+                COLUMN_NAMES
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+            Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false
             };
 
             @Override
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         };
         jTableData.setModel(defaultTableModel);
         jTableData.getTableHeader().setReorderingAllowed(false);
         jTableData.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
@@ -608,40 +584,40 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanelDetailLayout = new javax.swing.GroupLayout(jPanelDetail);
         jPanelDetail.setLayout(jPanelDetailLayout);
         jPanelDetailLayout.setHorizontalGroup(
-            jPanelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDetailLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPaneData, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                .addContainerGap())
+                jPanelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelDetailLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPaneData, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         jPanelDetailLayout.setVerticalGroup(
-            jPanelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDetailLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPaneData, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                .addContainerGap())
+                jPanelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelDetailLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPaneData, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
-            .addComponent(jPanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanelDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jToolBarRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
+                        .addComponent(jPanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanelDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBarRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jToolBarRecord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanelHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanelDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
-        setLocationRelativeTo(null);
+        Base.centrarVentana(this);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
@@ -658,6 +634,8 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         }
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ESCAPE
                 && currentAction != ActionType.ON_USE) {
+
+            LOG.debug("Cancelling action over product");
 
             controlarEstadoBotonesBarraHerramienta(false);
             controlarEstadoPanelIngresoDeDatos(false);
@@ -691,7 +669,9 @@ public final class JFrameRegistro extends javax.swing.JFrame {
         }
         if (evt.getSource().equals(jButtonInfo)) {
             LOG.info("Mostrar detalle de la PC");
-            info();
+            JOptionPane.showMessageDialog(this,
+                    String.format("%s@%s\n%s %s", Base.getNombreMaquina(), Base.getDireccionIp(), Base.getFecha(), Base.getHoraMinAmPm2()),
+                    getTitle(), JOptionPane.PLAIN_MESSAGE);
         }
         if (evt.getSource().equals(jButtonExit)) {
             LOG.info("Salir de la aplicacion");

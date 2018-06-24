@@ -36,8 +36,8 @@ public final class ArchivoProducto {
      */
     public static boolean crearArchivo(final Producto producto, final String path) {
         boolean band;
-        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(path))) {
-            salida.writeObject(producto);
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(path))) {
+            outputStream.writeObject(producto);
             LOG.info("Creando nuevo archivo, se registro el primer producto");
             band = true;
         } catch (IOException e) {
@@ -48,17 +48,17 @@ public final class ArchivoProducto {
     }
 
     /**
-     * @param productos objeto destino
-     * @param ruta      ubicacion del fichero de datos
+     * @param products objeto destino
+     * @param path     ubicacion del fichero de datos
      */
-    public static void cargarRegistrosArray(List<Producto> productos, String ruta) {
+    public static void cargarRegistrosArray(final List<Producto> products, final String path) {
         try {
-            File archivo = new File(ruta);
+            File archivo = new File(path);
             if (archivo.exists()) {
-                try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(archivo))) {
+                try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(archivo))) {
                     Producto auxProducto;
-                    while ((auxProducto = (Producto) entrada.readObject()) != null) {
-                        productos.add(auxProducto);
+                    while ((auxProducto = (Producto) inputStream.readObject()) != null) {
+                        products.add(auxProducto);
                     }
                 }
             } else {
@@ -71,33 +71,33 @@ public final class ArchivoProducto {
                 }
             }
         } catch (EOFException e) {
-            LOG.info("Se cargaron {} registros de productos", productos.size());
+            LOG.info("Se cargaron {} registros de products", products.size());
 
-            LOG.error("Error de fin de Archivo: {}", ruta);
+            LOG.error("Error de fin de Archivo: {}", path);
         } catch (ClassNotFoundException e) {
             LOG.error("Clase no encontrada", e);
         } catch (IOException e) {
-            LOG.error(IO_ERROR_MESSAGE, ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, path, e);
         }
     }
 
     /**
-     * @param ruta ubicacion del fichero de datos
+     * @param path ubicacion del fichero de datos
      * @return total de registros
      */
-    public static int cantidadRegistros(String ruta) {
+    public static int cantidadRegistros(final String path) {
         int cantidad = 0;
 
-        try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(ruta))) {
-            while (entrada.readObject() != null) {
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(path))) {
+            while (inputStream.readObject() != null) {
                 cantidad++;
             }
         } catch (EOFException e) {
-            LOG.error("Error de fin de Archivo: {}", ruta);
+            LOG.error("Error de fin de Archivo: {}", path);
         } catch (ClassNotFoundException e) {
             LOG.error("Clase no encontrada", e);
         } catch (IOException e) {
-            LOG.error(IO_ERROR_MESSAGE, ruta, e);
+            LOG.error(IO_ERROR_MESSAGE, path, e);
         }
 
         return cantidad;
@@ -107,11 +107,11 @@ public final class ArchivoProducto {
      * @param producto producto a agregar
      * @param ruta     ubicacion del fichero de datos
      */
-    public static boolean adicionarRegistro(Producto producto, String ruta) {
+    public static boolean adicionarRegistro(final Producto producto, final String ruta) {
         boolean band;
-        try (AppendingObjectOutputStream salida = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
-            salida.writeUnshared(producto);
-            salida.flush();
+        try (AppendingObjectOutputStream outputStream = new AppendingObjectOutputStream(new FileOutputStream(ruta, true))) {
+            outputStream.writeUnshared(producto);
+            outputStream.flush();
             LOG.info("Producto agregado: {}", producto.getCodigo());
             band = true;
         } catch (IOException e) {
@@ -123,12 +123,12 @@ public final class ArchivoProducto {
 
     /**
      * @param producto producto a modificar
-     * @param ruta     ubicacion del fichero de datos
+     * @param path     ubicacion del fichero de datos
      */
-    public static boolean modificarRegistro(Producto producto, String ruta) {
+    public static boolean modificarRegistro(final Producto producto, final String path) {
         boolean band = false;
         List<Producto> v = new ArrayList<>();
-        cargarRegistrosArray(v, ruta);
+        cargarRegistrosArray(v, path);
         for (int i = 0; i < v.size(); i++) {
             Producto p = v.get(i);
             if (p.getCodigo().compareTo(producto.getCodigo()) == 0) {
@@ -138,14 +138,14 @@ public final class ArchivoProducto {
             }
         }
         if (band) {
-            try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
-                salida.reset();
+            try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(path))) {
+                outputStream.reset();
                 for (Producto p : v) {
-                    salida.writeObject(p);
+                    outputStream.writeObject(p);
                 }
                 LOG.info("Producto modificado: {}", producto.getCodigo());
             } catch (IOException ioe) {
-                LOG.error(IO_ERROR_MESSAGE, ruta, ioe);
+                LOG.error(IO_ERROR_MESSAGE, path, ioe);
             }
         } else {
             LOG.warn("No hay producto a modificar");
@@ -154,17 +154,17 @@ public final class ArchivoProducto {
     }
 
     /**
-     * @param codigo codigo de producto a anular
-     * @param ruta   ubicacion del fichero de datos
+     * @param code code de producto a anular
+     * @param path ubicacion del fichero de datos
      * @return registro anulado
      */
-    public static boolean anularRegistro(String codigo, String ruta) {
+    public static boolean anularRegistro(final String code, final String path) {
         boolean band = false;
         List<Producto> v = new ArrayList<>();
-        cargarRegistrosArray(v, ruta);
+        cargarRegistrosArray(v, path);
         for (int i = 0; i < v.size(); i++) {
             Producto p = v.get(i);
-            if (p.getCodigo().compareTo(codigo) == 0) {
+            if (p.getCodigo().compareTo(code) == 0) {
                 v.remove(i);
                 band = true;
                 break;
@@ -172,33 +172,33 @@ public final class ArchivoProducto {
         }
 
         if (band) {
-            try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(ruta))) {
-                salida.reset();
+            try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(path))) {
+                outputStream.reset();
                 for (Producto p : v) {
-                    salida.writeObject(p);
+                    outputStream.writeObject(p);
                 }
-                LOG.info("Producto anulado: {}", codigo);
+                LOG.info("Producto anulado: {}", code);
             } catch (IOException ioe) {
-                LOG.error(IO_ERROR_MESSAGE, ruta, ioe);
+                LOG.error(IO_ERROR_MESSAGE, path, ioe);
             }
         }
         return band;
     }
 
     /**
-     * @param codigo codigo de producto a buscar
-     * @param ruta   ubicacion del fichero de datos
+     * @param code code de producto a buscar
+     * @param path ubicacion del fichero de datos
      * @return registro consultado
      */
-    public static Producto consultarRegistro(final String codigo, final String ruta) {
+    public static Producto consultarRegistro(final String code, final String path) {
         List<Producto> v = new ArrayList<>();
 
-        cargarRegistrosArray(v, ruta);
+        cargarRegistrosArray(v, path);
 
-        LOG.info("Buscando registro con codigo '{}'", codigo);
+        LOG.info("Buscando registro con code '{}'", code);
 
         return v.stream()
-                .filter(p -> p.getCodigo().compareTo(codigo) == 0)
+                .filter(p -> p.getCodigo().compareTo(code) == 0)
                 .findFirst()
                 .orElse(null);
     }

@@ -7,12 +7,12 @@ public class Producto implements java.io.Serializable {
 
     private static final long serialVersionUID = 3762613621712220046L;
 
-    private String codigo;
-    private String descripcion;
-    private int total;
-    private double precio;
-    private boolean exonerado;
-    private boolean visible;
+    private final String codigo;
+    private final String descripcion;
+    private final int total;
+    private final double precio;
+    private final boolean exonerado;
+    private final boolean visible;
 
     public Producto(String codigo, String descripcion, int total, double precio,
                     boolean exonerado, boolean visible) {
@@ -46,15 +46,5 @@ public class Producto implements java.io.Serializable {
 
     public boolean isVisible() {
         return visible;
-    }
-
-    @Override
-    public String toString() {
-        return "Codigo: " + codigo +
-                "\nDescripcion: " + descripcion +
-                "\nCantidad: " + total +
-                "\nPrecio: " + precio +
-                "\nExonerado: " + exonerado +
-                "\nVisible: " + visible;
     }
 }

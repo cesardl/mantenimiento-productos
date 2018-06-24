@@ -3,6 +3,7 @@ package org.sanmarcux.clases;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -73,5 +74,14 @@ public class BaseTest {
 
         result = Base.centrarCadena("abcdef", 10, "@");
         assertEquals("@@abcdef@@", result);
+    }
+
+    @Test
+    public void dataPC() {
+        String ipAddress = Base.getDireccionIp();
+        assertNotNull(ipAddress);
+
+        String pcName = Base.getNombreMaquina();
+        assertNotNull(pcName);
     }
 }

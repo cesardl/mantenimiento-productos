@@ -185,47 +185,40 @@ public final class Base {
      * @return obtiene la direccion IP de la PC
      */
     public static String getDireccionIp() {
-        String dato;
-        int posicion;
+        String address;
+        int position;
         try {
-            dato = java.net.InetAddress.getLocalHost().toString();
-            posicion = dato.indexOf('/');
-            if (posicion >= 0) {
-                dato = dato.substring(posicion + 1);
+            address = java.net.InetAddress.getLocalHost().toString();
+            position = address.indexOf('/');
+            if (position >= 0) {
+                address = address.substring(position + 1);
             }
         } catch (java.net.UnknownHostException uhe) {
             LOG.error(uhe.getMessage(), uhe);
-            dato = "No se encontro LocalHost: " + uhe.toString() + " " + uhe.getMessage();
+            address = "No se encontro LocalHost: " + uhe.toString() + " " + uhe.getMessage();
         }
-        return dato;
+        LOG.debug("Obtained IP address: {}", address);
+        return address;
     }
 
     /**
      * @return the machine name
      */
     public static String getNombreMaquina() {
-        String dato;
-        int posicion;
+        String name;
+        int position;
         try {
-            dato = java.net.InetAddress.getLocalHost().toString();
-            posicion = dato.indexOf('/');
-            if (posicion >= 0) {
-                dato = dato.substring(0, posicion);
+            name = java.net.InetAddress.getLocalHost().toString();
+            position = name.indexOf('/');
+            if (position >= 0) {
+                name = name.substring(0, position);
             }
         } catch (java.net.UnknownHostException uhe) {
             LOG.error(uhe.getMessage(), uhe);
-            dato = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
+            name = "No se encontro LocalHost" + uhe.toString() + " " + uhe.getMessage();
         }
-        return dato;
-    }
-
-    /**
-     * @param strMensaje mensaje a mostrar
-     * @param strTitulo  titulo de la ventana
-     * @param iTipoIcono tipo de mensaje
-     */
-    public static void mensaje(String strMensaje, String strTitulo, int iTipoIcono) {
-        javax.swing.JOptionPane.showMessageDialog(null, strMensaje, strTitulo, iTipoIcono);
+        LOG.debug("Obtained PC name: {}", name);
+        return name;
     }
 
     /**
@@ -269,11 +262,11 @@ public final class Base {
         }
 
         try {
-            MaskFormatter numcase = new MaskFormatter(formato.toString());
-            numcase.setPlaceholderCharacter(caracter);
-            numcase.setOverwriteMode(true);
-            numcase.setValidCharacters("0123456789");
-            factory = new DefaultFormatterFactory(numcase);
+            MaskFormatter formatter = new MaskFormatter(formato.toString());
+            formatter.setPlaceholderCharacter(caracter);
+            formatter.setOverwriteMode(true);
+            formatter.setValidCharacters("0123456789");
+            factory = new DefaultFormatterFactory(formatter);
         } catch (ParseException pe) {
             LOG.error("Error al dar Formato de Numero Real", pe);
         }
